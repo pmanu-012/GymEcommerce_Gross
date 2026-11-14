@@ -1,0 +1,113 @@
+@using GymEcommerce.ViewModels
+@model CatalogoViewModel
+@{
+    var esOfertas = Model.Accion == "Ofertas";
+    ViewData["Title"] = esOfertas ? "Ofertas" : "Catálogo";
+
+    // Categoría "activa": la elegida, o la que contiene a la subcategoría elegida
+    int? catActivaId = Model.Filtro.CategoriaId
+        ?? Model.Categorias.FirstOrDefault(c => c.Subcategorias.Any(s => s.Id == Model.Filtro.SubcategoriaId))?.Id;
+
+    string Pag(int pagina) => Url.Action(Model.Accion, new
+    {
+        q = Model.Filtro.Q,
+        categoriaId = Model.Filtro.CategoriaId,
+        subcategoriaId = Model.Filtro.SubcategoriaId,
+        orden = Model.Filtro.Orden,
+        pagina
+    })!;
+}
+
+<div class="row g-4">
+    <!-- Categorías -->
+    <aside class="col-lg-3">
+        <h2 class="h5">Categorías</h2>
+        <div class="list-group mb-4">
+            <a asp-action="@Model.Accion" asp-route-q="@Model.Filtro.Q" asp-route-orden="@Model.Filtro.Orden"
+               class="list-group-item list-group-item-action @(catActivaId is null ? "active" : "")">Todas</a>
+            @foreach (var c in Model.Categorias)
+            {
+                <a asp-action="@Model.Accion" asp-route-categoriaId="@c.Id" asp-route-q="@Model.Filtro.Q" asp-route-orden="@Model.Filtro.Orden"
+                   class="list-group-item list-group-item-action @(c.Id == catActivaId && Model.Filtro.SubcategoriaId is null ? "active" : "")">@c.Nombre</a>
+
+                if (c.Id == catActivaId)
+                {
+                    foreach (var s in c.Subcategorias)
+                    {
+                        <a asp-action="@Model.Accion" asp-route-categoriaId="@c.Id" asp-route-subcategoriaId="@s.Id"
+                           asp-route-q="@Model.Filtro.Q" asp-route-orden="@Model.Filtro.Orden"
+                           class="list-group-item list-group-item-action ps-4 small @(s.Id == Model.Filtro.SubcategoriaId ? "active" : "")">@s.Nombre</a>
+                    }
+                }
+            }
+        </div>
+    </aside>
+
+    <!-- Resultados -->
+    <section class="col-lg-9">
+        <h1 class="h3 mb-3">@ViewData["Title"]</h1>
+
+        <form asp-action="@Model.Accion" method="get" class="row g-2 mb-3">
+            <input type="hidden" name="categoriaId" value="@Model.Filtro.CategoriaId" />
+            <input type="hidden" name="subcategoriaId" value="@Model.Filtro.SubcategoriaId" />
+            <div class="col-md-7">
+                <div class="input-group">
+                    <input type="search" name="q" value="@Model.Filtro.Q" class="form-control" placeholder="Buscar productos..." />
+                    <button class="btn btn-primary" type="submit">Buscar</button>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <select name="orden" class="form-select" aria-label="Ordenar por" onchange="this.form.submit()">
+                    <option value="Nombre" selected="@(Model.Filtro.Orden == OrdenCatalogo.Nombre)">Nombre (A-Z)</option>
+                    <option value="PrecioMenor" selected="@(Model.Filtro.Orden == OrdenCatalogo.PrecioMenor)">Menor precio</option>
+                    <option value="PrecioMayor" selected="@(Model.Filtro.Orden == OrdenCatalogo.PrecioMayor)">Mayor precio</option>
+                    <option value="Descuento" selected="@(Model.Filtro.Orden == OrdenCatalogo.Descuento)">Mayor descuento</option>
+                </select>
+            </div>
+        </form>
+
+        <p class="text-muted small">
+            @Model.TotalProductos @(Model.TotalProductos == 1 ? "producto" : "productos")
+            @if (!string.IsNullOrWhiteSpace(Model.Filtro.Q))
+            {
+                <span>para "<strong>@Model.Filtro.Q</strong>"</span>
+            }
+        </p>
+
+        @if (Model.Productos.Count == 0)
+        {
+            <div class="alert alert-info">No encontramos productos con esos filtros.</div>
+        }
+        else
+        {
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-3 g-4">
+                @foreach (var p in Model.Productos)
+                {
+                    <div class="col">
+                        <partial name="_ProductoCard" model="p" />
+                    </div>
+                }
+            </div>
+        }
+
+        @if (Model.TotalPaginas > 1)
+        {
+            <nav aria-label="Paginación" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item @(Model.PaginaActual == 1 ? "disabled" : "")">
+                        <a class="page-link" href="@Pag(Model.PaginaActual - 1)">Anterior</a>
+                    </li>
+                    @for (var i = Math.Max(1, Model.PaginaActual - 2); i <= Math.Min(Model.TotalPaginas, Model.PaginaActual + 2); i++)
+                    {
+                        <li class="page-item @(i == Model.PaginaActual ? "active" : "")">
+                            <a class="page-link" href="@Pag(i)">@i</a>
+                        </li>
+                    }
+                    <li class="page-item @(Model.PaginaActual == Model.TotalPaginas ? "disabled" : "")">
+                        <a class="page-link" href="@Pag(Model.PaginaActual + 1)">Siguiente</a>
+                    </li>
+                </ul>
+            </nav>
+        }
+    </section>
+</div>

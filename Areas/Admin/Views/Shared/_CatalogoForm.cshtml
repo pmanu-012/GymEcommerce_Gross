@@ -1,0 +1,35 @@
+@model CatalogoFormViewModel
+
+<form id="formCatalogo" asp-action="Guardar" method="post" novalidate>
+    <div class="modal-header">
+        <h2 class="modal-title h5" id="modalCatalogoTitulo">@Model.TituloModal</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+    </div>
+
+    <div class="modal-body">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="Id" />
+
+        @if (Model.PideCategoria)
+        {
+            <div class="mb-3">
+                <label asp-for="IdCategoria" class="form-label"></label>
+                <select asp-for="IdCategoria" asp-items="Model.Categorias" class="form-select">
+                    <option value="">Elegí una categoría</option>
+                </select>
+                <span asp-validation-for="IdCategoria" class="text-danger"></span>
+            </div>
+        }
+
+        <div class="mb-3">
+            <label asp-for="Nombre" class="form-label"></label>
+            <input asp-for="Nombre" class="form-control" maxlength="100" autocomplete="off" />
+            <span asp-validation-for="Nombre" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    </div>
+</form>

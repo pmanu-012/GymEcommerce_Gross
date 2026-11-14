@@ -1,0 +1,75 @@
+@model CatalogoListadoViewModel
+@{
+    ViewData["Title"] = Model.Titulo;
+    var tieneDetalle = Model.ColumnaDetalle is not null;
+}
+
+@Html.AntiForgeryToken()
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <h1 class="h3 mb-0">@Model.Titulo</h1>
+    <button type="button" class="btn btn-primary js-catalogo-nuevo" data-url="@Url.Action("Form")">
+        <i class="bi bi-plus-lg" aria-hidden="true"></i> @Model.TextoNuevo
+    </button>
+</div>
+
+@if (Model.Filas.Count == 0)
+{
+    <div class="alert alert-info">Todavía no hay registros. Usá el botón "@Model.TextoNuevo" para cargar el primero.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle tabla-admin bg-white">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    @if (tieneDetalle)
+                    {
+                        <th>@Model.ColumnaDetalle</th>
+                    }
+                    <th class="text-end">@Model.TextoAsociados</th>
+                    <th class="text-end">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var fila in Model.Filas)
+                {
+                    <tr>
+                        <td class="fw-medium">@fila.Nombre</td>
+                        @if (tieneDetalle)
+                        {
+                            <td>@fila.Detalle</td>
+                        }
+                        <td class="text-end">@fila.CantidadAsociados</td>
+                        <td class="text-end text-nowrap">
+                            <button type="button" class="btn btn-sm btn-outline-primary js-catalogo-editar"
+                                    data-url="@Url.Action("Form", new { id = fila.Id })"
+                                    title="Editar" aria-label="Editar @fila.Nombre">
+                                <i class="bi bi-pencil" aria-hidden="true"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-danger js-catalogo-eliminar"
+                                    data-url="@Url.Action("Eliminar", new { id = fila.Id })"
+                                    data-nombre="@fila.Nombre"
+                                    title="Eliminar" aria-label="Eliminar @fila.Nombre">
+                                <i class="bi bi-trash" aria-hidden="true"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<!-- El contenido del modal (el formulario) se carga por AJAX -->
+<div class="modal fade" id="modalCatalogo" tabindex="-1" aria-labelledby="modalCatalogoTitulo" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" id="modalCatalogoContenido"></div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/admin-catalogos.js" asp-append-version="true"></script>
+}

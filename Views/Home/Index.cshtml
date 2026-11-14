@@ -1,0 +1,56 @@
+@model GymEcommerce.ViewModels.PortadaViewModel
+@{
+    ViewData["Title"] = "Inicio";
+}
+
+@section Hero {
+    <section class="gs-hero">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-7">
+                    <h1 class="gs-hero-titulo">Equipá tu entrenamiento</h1>
+                    <p class="lead text-white-50 my-3">Pesas, máquinas, accesorios y ropa deportiva en un solo lugar.</p>
+                    <a class="btn btn-primary btn-lg me-2" asp-controller="Catalogo" asp-action="Index">Ver catálogo</a>
+                    <a class="btn btn-outline-light btn-lg" asp-controller="Catalogo" asp-action="Ofertas">Ver ofertas</a>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+
+@if (Model.Categorias.Count == 0 && Model.Ofertas.Count == 0)
+{
+    <div class="alert alert-info">Todavía no hay productos cargados.</div>
+}
+
+@if (Model.Categorias.Count > 0)
+{
+    <h2 class="gs-seccion-titulo h3">Categorías</h2>
+    <div class="row row-cols-2 row-cols-md-4 g-3 mb-5">
+        @foreach (var c in Model.Categorias)
+        {
+            <div class="col">
+                <a class="gs-categoria" asp-controller="Catalogo" asp-action="Index" asp-route-categoriaId="@c.Id">
+                    <span>@c.Nombre</span>
+                    <i class="bi bi-arrow-up-right" aria-hidden="true"></i>
+                </a>
+            </div>
+        }
+    </div>
+}
+
+@if (Model.Ofertas.Count > 0)
+{
+    <div class="d-flex justify-content-between align-items-end mb-3">
+        <h2 class="gs-seccion-titulo h3 mb-0">Ofertas</h2>
+        <a asp-controller="Catalogo" asp-action="Ofertas">Ver todas</a>
+    </div>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
+        @foreach (var p in Model.Ofertas)
+        {
+            <div class="col">
+                <partial name="_ProductoCard" model="p" />
+            </div>
+        }
+    </div>
+}

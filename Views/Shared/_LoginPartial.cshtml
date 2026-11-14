@@ -1,0 +1,38 @@
+@using GymEcommerce.Models
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+
+<ul class="navbar-nav align-items-lg-center">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-person-circle" aria-hidden="true"></i> Mi cuenta
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><span class="dropdown-item-text small text-muted">@User.Identity?.Name</span></li>
+                @if (User.IsInRole(Roles.Administrador))
+                {
+                  <li><a class="dropdown-item" asp-area="Admin" asp-controller="Productos" asp-action="Index"><i class="bi bi-speedometer2" aria-hidden="true"></i> Panel de administración</a></li>
+                }
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                    <form asp-controller="Account" asp-action="Logout" method="post">
+                        <button type="submit" class="dropdown-item">
+                            <i class="bi bi-box-arrow-right" aria-hidden="true"></i> Cerrar sesión
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link" asp-controller="Account" asp-action="Login">Iniciar sesión</a>
+        </li>
+        <li class="nav-item ms-lg-2">
+            <a class="btn btn-primary btn-sm" asp-controller="Account" asp-action="Register">Registrarse</a>
+        </li>
+    }
+</ul>

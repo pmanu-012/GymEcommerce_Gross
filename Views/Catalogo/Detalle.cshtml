@@ -1,0 +1,94 @@
+@model GymEcommerce.ViewModels.ProductoDetalleViewModel
+@{
+    ViewData["Title"] = Model.Nombre;
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="Index">Catálogo</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index" asp-route-categoriaId="@Model.IdCategoria">@Model.Categoria</a></li>
+        <li class="breadcrumb-item">
+            <a asp-action="Index" asp-route-categoriaId="@Model.IdCategoria" asp-route-subcategoriaId="@Model.IdSubcategoria">@Model.Subcategoria</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">@Model.Nombre</li>
+    </ol>
+</nav>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="position-relative">
+            <img src="@Url.Content(Model.ImagenUrl ?? "~/img/sin-imagen.svg")" alt="@Model.Nombre" class="img-fluid rounded border w-100" />
+            @if (Model.EnOferta)
+            {
+                <span class="badge bg-danger fs-6 position-absolute top-0 start-0 m-3">@($"-{Model.PorcentajeDescuento:0.##}%")</span>
+            }
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <h1 class="h2">@Model.Nombre</h1>
+
+        <div class="my-3">
+            @if (Model.EnOferta)
+            {
+                <del class="text-muted">@Model.Precio.ToString("C")</del>
+            }
+            <div class="display-6 fw-bold">@Model.PrecioFinal.ToString("C")</div>
+        </div>
+
+        @if (Model.Stock <= 0)
+        {
+            <p><span class="badge bg-secondary">Sin stock</span></p>
+        }
+        else if (Model.Stock <= 5)
+        {
+            <p><span class="badge bg-warning text-dark">¡Últimas @Model.Stock unidades!</span></p>
+        }
+        else
+        {
+            <p><span class="badge bg-success">Disponible</span></p>
+        }
+
+        @* Hito del carrito: acá va el botón "Agregar al carrito" (solo para clientes autenticados). *@
+
+        @if (!string.IsNullOrWhiteSpace(Model.Descripcion))
+        {
+            <p class="mt-4">@Model.Descripcion</p>
+        }
+
+        <dl class="row mt-4">
+            @if (!string.IsNullOrWhiteSpace(Model.Uso))
+            {
+                <dt class="col-sm-4">Uso</dt>
+                <dd class="col-sm-8">@Model.Uso</dd>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.Material))
+            {
+                <dt class="col-sm-4">Material</dt>
+                <dd class="col-sm-8">@Model.Material</dd>
+            }
+            @if (Model.Disciplinas.Count > 0)
+            {
+                <dt class="col-sm-4">Disciplinas</dt>
+                <dd class="col-sm-8">
+                    @foreach (var d in Model.Disciplinas)
+                    {
+                        <span class="badge text-bg-light border me-1">@d</span>
+                    }
+                </dd>
+            }
+            @if (Model.GruposMusculares.Count > 0)
+            {
+                <dt class="col-sm-4">Grupos musculares</dt>
+                <dd class="col-sm-8">
+                    @foreach (var g in Model.GruposMusculares)
+                    {
+                        <span class="badge text-bg-light border me-1">@g</span>
+                    }
+                </dd>
+            }
+        </dl>
+    </div>
+</div>
+
+@* Hito de reseñas: acá va la lista de reseñas del producto. *@

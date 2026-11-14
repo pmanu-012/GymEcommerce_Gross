@@ -1,0 +1,30 @@
+@model GymEcommerce.ViewModels.ProductoCardViewModel
+
+<article class="card producto-card h-100">
+    <a asp-controller="Catalogo" asp-action="Detalle" asp-route-id="@Model.IdProducto"
+       class="producto-imagen position-relative d-block" aria-label="@Model.Nombre">
+        <div class="ratio ratio-1x1">
+            <img src="@Url.Content(Model.ImagenUrl ?? "~/img/sin-imagen.svg")" alt="@Model.Nombre" loading="lazy" />
+        </div>
+        @if (Model.EnOferta)
+        {
+            <span class="gs-badge gs-badge-oferta">@($"-{Model.PorcentajeDescuento:0.##}%")</span>
+        }
+        @if (Model.Stock <= 0)
+        {
+            <span class="gs-badge gs-badge-sinstock">Sin stock</span>
+        }
+    </a>
+    <div class="card-body d-flex flex-column">
+        <h2 class="h6 card-title mb-2">
+            <a asp-controller="Catalogo" asp-action="Detalle" asp-route-id="@Model.IdProducto">@Model.Nombre</a>
+        </h2>
+        <div class="mt-auto">
+            @if (Model.EnOferta)
+            {
+                <del class="text-muted small d-block">@Model.Precio.ToString("C")</del>
+            }
+            <div class="precio-final">@Model.PrecioFinal.ToString("C")</div>
+        </div>
+    </div>
+</article>

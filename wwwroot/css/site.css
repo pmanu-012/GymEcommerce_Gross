@@ -1,0 +1,289 @@
+/* ==========================================================================
+   Identidad visual
+   Para cambiar el color de acento (botones, resaltados) editá --gs-acento y
+   --gs-acento-rgb. Todo el sitio lo toma de acá.
+   ========================================================================== */
+:root {
+    --gs-carbon: #15171A;
+    --gs-grafito: #2B2F36;
+    --gs-acento: #FF5B14;
+    --gs-acento-rgb: 255, 91, 20;
+    --gs-acento-hover: #FF7A3D;
+    --gs-acento-active: #E84E0B;
+    --gs-acento-texto: #C2410C; /* acento oscurecido para enlaces sobre fondo claro (contraste AA) */
+    --gs-oferta: #D62839;
+    --gs-hueso: #F5F5F2;
+    --gs-gris: #6B7280;
+
+    --gs-font-display: 'Barlow Condensed', 'Arial Narrow', Impact, sans-serif;
+    --gs-font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+    /* Bootstrap 5.3 toma estas variables */
+    --bs-body-font-family: var(--gs-font-body);
+    --bs-body-bg: var(--gs-hueso);
+    --bs-body-bg-rgb: 245, 245, 242;
+    --bs-body-color: var(--gs-carbon);
+    --bs-body-color-rgb: 21, 23, 26;
+    --bs-primary: var(--gs-acento);
+    --bs-primary-rgb: var(--gs-acento-rgb);
+    --bs-danger: var(--gs-oferta);
+    --bs-danger-rgb: 214, 40, 57;
+    --bs-link-color: var(--gs-acento-texto);
+    --bs-link-color-rgb: 194, 65, 12;
+    --bs-link-hover-color: #9A3412;
+    --bs-link-hover-color-rgb: 154, 52, 18;
+    --bs-border-radius: .375rem;
+}
+
+/* ---------- Tipografía ---------- */
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6,
+.display-5, .display-6 {
+    font-family: var(--gs-font-display);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .02em;
+}
+
+.btn {
+    font-family: var(--gs-font-display);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    font-size: 1.05rem;
+}
+
+.btn-sm { font-size: .95rem; }
+
+/* ---------- Botones: texto oscuro sobre naranja ---------- */
+.btn-primary {
+    --bs-btn-color: var(--gs-carbon);
+    --bs-btn-bg: var(--gs-acento);
+    --bs-btn-border-color: var(--gs-acento);
+    --bs-btn-hover-color: var(--gs-carbon);
+    --bs-btn-hover-bg: var(--gs-acento-hover);
+    --bs-btn-hover-border-color: var(--gs-acento-hover);
+    --bs-btn-active-color: var(--gs-carbon);
+    --bs-btn-active-bg: var(--gs-acento-active);
+    --bs-btn-active-border-color: var(--gs-acento-active);
+    --bs-btn-focus-shadow-rgb: var(--gs-acento-rgb);
+    --bs-btn-disabled-color: var(--gs-carbon);
+    --bs-btn-disabled-bg: var(--gs-acento);
+    --bs-btn-disabled-border-color: var(--gs-acento);
+}
+
+.btn-outline-primary {
+    --bs-btn-color: var(--gs-acento-texto);
+    --bs-btn-border-color: var(--gs-acento);
+    --bs-btn-hover-color: var(--gs-carbon);
+    --bs-btn-hover-bg: var(--gs-acento);
+    --bs-btn-hover-border-color: var(--gs-acento);
+    --bs-btn-active-color: var(--gs-carbon);
+    --bs-btn-active-bg: var(--gs-acento-active);
+    --bs-btn-active-border-color: var(--gs-acento-active);
+    --bs-btn-focus-shadow-rgb: var(--gs-acento-rgb);
+}
+
+/* ---------- Formularios, paginación, listas ---------- */
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--gs-acento);
+    box-shadow: 0 0 0 .2rem rgba(var(--gs-acento-rgb), .25);
+}
+
+.form-check-input:checked {
+    background-color: var(--gs-acento);
+    border-color: var(--gs-acento);
+}
+
+.form-check-input:focus {
+    border-color: var(--gs-acento);
+    box-shadow: 0 0 0 .2rem rgba(var(--gs-acento-rgb), .25);
+}
+
+.pagination {
+    --bs-pagination-color: var(--gs-carbon);
+    --bs-pagination-hover-color: var(--gs-carbon);
+    --bs-pagination-focus-color: var(--gs-carbon);
+    --bs-pagination-focus-box-shadow: 0 0 0 .2rem rgba(var(--gs-acento-rgb), .25);
+    --bs-pagination-active-color: var(--gs-carbon);
+    --bs-pagination-active-bg: var(--gs-acento);
+    --bs-pagination-active-border-color: var(--gs-acento);
+}
+
+.list-group {
+    --bs-list-group-active-color: var(--gs-carbon);
+    --bs-list-group-active-bg: var(--gs-acento);
+    --bs-list-group-active-border-color: var(--gs-acento);
+}
+
+.card { --bs-card-bg: #fff; }
+
+/* ---------- Barra de navegación ---------- */
+.navbar.gs-navbar {
+    background-color: var(--gs-carbon);
+    border-bottom: 3px solid var(--gs-acento);
+    --bs-navbar-color: #D1D5DB;
+    --bs-navbar-hover-color: var(--gs-acento);
+    --bs-navbar-active-color: #fff;
+}
+
+.navbar.gs-navbar .nav-link {
+    font-weight: 500;
+}
+
+.gs-marca,
+.navbar-brand.gs-marca,
+.navbar-brand.gs-marca:hover {
+    font-family: var(--gs-font-display);
+    font-weight: 700;
+    font-size: 1.7rem;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: #fff;
+}
+
+.gs-marca i { color: var(--gs-acento); margin-right: .3rem; }
+
+/* ---------- Portada ---------- */
+.gs-hero {
+    position: relative;
+    overflow: hidden;
+    background: var(--gs-carbon);
+    color: #fff;
+    padding: 4.5rem 0;
+}
+
+.gs-hero::before,
+.gs-hero::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    pointer-events: none;
+}
+
+.gs-hero::before {
+    width: 38%;
+    background: var(--gs-acento);
+    clip-path: polygon(34% 0, 100% 0, 100% 100%, 0 100%);
+}
+
+.gs-hero::after {
+    width: 36%;
+    background: var(--gs-grafito);
+    clip-path: polygon(34% 0, 100% 0, 100% 100%, 0 100%);
+}
+
+.gs-hero .container { position: relative; z-index: 1; }
+
+.gs-hero-titulo {
+    font-size: clamp(2.6rem, 7vw, 4.5rem);
+    line-height: 1;
+    color: #fff;
+}
+
+@media (max-width: 767.98px) {
+    .gs-hero { padding: 3rem 0; }
+    .gs-hero::before,
+    .gs-hero::after { display: none; }
+}
+
+.gs-seccion-titulo {
+    border-left: 6px solid var(--gs-acento);
+    padding-left: .75rem;
+    margin-bottom: 1rem;
+}
+
+.gs-categoria {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    min-height: 110px;
+    padding: 1rem;
+    background: var(--gs-grafito);
+    color: #fff;
+    border-bottom: 4px solid transparent;
+    border-radius: var(--bs-border-radius);
+    font-family: var(--gs-font-display);
+    font-weight: 700;
+    font-size: 1.4rem;
+    line-height: 1.1;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background-color .15s, border-color .15s;
+}
+
+.gs-categoria:hover {
+    background: var(--gs-carbon);
+    border-bottom-color: var(--gs-acento);
+    color: #fff;
+}
+
+.gs-categoria i { color: var(--gs-acento); font-size: 1.1rem; }
+
+/* ---------- Tarjeta de producto ---------- */
+.producto-card {
+    border: 1px solid #E5E7EB;
+    overflow: hidden;
+    transition: transform .15s, border-color .15s;
+}
+
+.producto-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--gs-acento);
+}
+
+.producto-imagen img { object-fit: cover; }
+
+.producto-card .card-title {
+    font-family: var(--gs-font-body);
+    font-weight: 500;
+    font-size: .95rem;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+.producto-card .card-title a {
+    color: var(--gs-carbon);
+    text-decoration: none;
+}
+
+.producto-card .card-title a:hover { text-decoration: underline; }
+
+.precio-final {
+    font-family: var(--gs-font-display);
+    font-weight: 700;
+    font-size: 1.7rem;
+    line-height: 1.1;
+}
+
+.gs-badge {
+    position: absolute;
+    top: .5rem;
+    left: .5rem;
+    padding: .2rem .5rem;
+    border-radius: .25rem;
+    color: #fff;
+    font-size: .8rem;
+    font-weight: 600;
+}
+
+.gs-badge-oferta { background: var(--gs-oferta); }
+
+.gs-badge-sinstock {
+    left: auto;
+    right: .5rem;
+    background: var(--gs-gris);
+}
+
+/* ---------- Pie de página ---------- */
+.gs-footer {
+    background: var(--gs-carbon);
+    color: #9CA3AF;
+    border-top: 3px solid var(--gs-acento);
+}
+
+.gs-footer a { color: #D1D5DB; text-decoration: none; }
+.gs-footer a:hover { color: var(--gs-acento); }

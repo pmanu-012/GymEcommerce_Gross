@@ -1,0 +1,65 @@
+/* Panel de administración: sobrio, con la misma paleta de la tienda */
+
+.admin-etiqueta {
+    margin-left: .5rem;
+    padding: .1rem .5rem;
+    border-radius: .25rem;
+    background: var(--gs-acento);
+    color: var(--gs-carbon);
+    font-size: .75rem;
+    letter-spacing: .08em;
+    vertical-align: middle;
+}
+
+.admin-sidebar {
+    background: var(--gs-carbon);
+    padding: 0 .75rem;
+}
+
+@media (min-width: 992px) {
+    .admin-sidebar { padding: 1rem 0; }
+}
+
+.admin-nav .nav-link {
+    color: #D1D5DB;
+    padding: .7rem 1.25rem;
+    border-left: 4px solid transparent;
+}
+
+.admin-nav .nav-link:hover {
+    color: #fff;
+    background: var(--gs-grafito);
+}
+
+.admin-nav .nav-link.active {
+    color: #fff;
+    background: var(--gs-grafito);
+    border-left-color: var(--gs-acento);
+}
+
+.admin-nav .nav-link i {
+    margin-right: .5rem;
+    color: var(--gs-acento);
+}
+
+.tabla-admin thead th {
+    font-family: var(--gs-font-display);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    font-size: .95rem;
+    white-space: nowrap;
+}
+
+.tabla-admin img.miniatura {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: .25rem;
+    border: 1px solid #E5E7EB;
+}
+
+/* SweetAlert2: botón de confirmación con la paleta de la tienda */
+.swal2-confirm.swal2-styled {
+    color: var(--gs-carbon) !important;
+    font-weight: 600;
+}

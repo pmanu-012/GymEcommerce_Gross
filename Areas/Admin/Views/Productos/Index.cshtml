@@ -1,0 +1,142 @@
+@model ProductoListadoViewModel
+@{
+    ViewData["Title"] = "Productos";
+
+    string Pag(int pagina) => Url.Action("Index", new
+    {
+        q = Model.Q,
+        categoriaId = Model.CategoriaId,
+        estado = Model.Estado,
+        pagina
+    })!;
+}
+
+@Html.AntiForgeryToken()
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <h1 class="h3 mb-0">Productos</h1>
+    <a class="btn btn-primary" asp-action="Create"><i class="bi bi-plus-lg" aria-hidden="true"></i> Nuevo producto</a>
+</div>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-4">
+        <input asp-for="Q" class="form-control" placeholder="Buscar por nombre..." aria-label="Buscar por nombre" />
+    </div>
+    <div class="col-md-3">
+        <select asp-for="CategoriaId" asp-items="Model.Categorias" class="form-select" aria-label="Categoría">
+            <option value="">Todas las categorías</option>
+        </select>
+    </div>
+    <div class="col-md-3">
+        <select asp-for="Estado" class="form-select" aria-label="Estado">
+            <option value="activos">Activos</option>
+            <option value="inactivos">Dados de baja</option>
+            <option value="todos">Todos</option>
+        </select>
+    </div>
+    <div class="col-md-2 d-grid">
+        <button type="submit" class="btn btn-outline-primary">Filtrar</button>
+    </div>
+</form>
+
+<p class="text-muted small">@Model.Total @(Model.Total == 1 ? "producto" : "productos")</p>
+
+@if (Model.Productos.Count == 0)
+{
+    <div class="alert alert-info">No hay productos con esos filtros.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle tabla-admin bg-white">
+            <thead>
+                <tr>
+                    <th style="width:64px"></th>
+                    <th>Producto</th>
+                    <th>Categoría</th>
+                    <th class="text-end">Precio</th>
+                    <th class="text-end">Stock</th>
+                    <th>Estado</th>
+                    <th class="text-end">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in Model.Productos)
+                {
+                    <tr>
+                        <td>
+                            <img class="miniatura" src="@Url.Content(p.ImagenUrl ?? "~/img/sin-imagen.svg")" alt="" />
+                        </td>
+                        <td>
+                            <div class="fw-medium">@p.Nombre</div>
+                            @if (p.PorcentajeDescuento > 0)
+                            {
+                                <span class="badge bg-danger">@($"-{p.PorcentajeDescuento:0.##}%")</span>
+                            }
+                        </td>
+                        <td>
+                            <div>@p.Categoria</div>
+                            <div class="small text-muted">@p.Subcategoria</div>
+                        </td>
+                        <td class="text-end">@p.Precio.ToString("C")</td>
+                        <td class="text-end">
+                            @if (p.Stock == 0)
+                            {
+                                <span class="badge bg-secondary">Sin stock</span>
+                            }
+                            else
+                            {
+                                @p.Stock
+                            }
+                        </td>
+                        <td>
+                            @if (p.Activo)
+                            {
+                                <span class="badge text-bg-success">Activo</span>
+                            }
+                            else
+                            {
+                                <span class="badge text-bg-secondary">De baja</span>
+                            }
+                        </td>
+                        <td class="text-end text-nowrap">
+                            <a class="btn btn-sm btn-outline-primary" asp-action="Edit" asp-route-id="@p.IdProducto"
+                               title="Editar" aria-label="Editar @p.Nombre">
+                                <i class="bi bi-pencil" aria-hidden="true"></i>
+                            </a>
+                            <button type="button"
+                                    class="btn btn-sm @(p.Activo ? "btn-outline-danger" : "btn-outline-success") js-estado"
+                                    data-url="@Url.Action("CambiarEstado", new { id = p.IdProducto })"
+                                    data-nombre="@p.Nombre"
+                                    data-activo="@(p.Activo ? "true" : "false")"
+                                    title="@(p.Activo ? "Dar de baja" : "Reactivar")"
+                                    aria-label="@(p.Activo ? "Dar de baja" : "Reactivar") @p.Nombre">
+                                <i class="bi @(p.Activo ? "bi-trash" : "bi-arrow-counterclockwise")" aria-hidden="true"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (Model.TotalPaginas > 1)
+    {
+        <nav aria-label="Paginación">
+            <ul class="pagination justify-content-center">
+                <li class="page-item @(Model.Pagina == 1 ? "disabled" : "")">
+                    <a class="page-link" href="@Pag(Model.Pagina - 1)">Anterior</a>
+                </li>
+                @for (var i = Math.Max(1, Model.Pagina - 2); i <= Math.Min(Model.TotalPaginas, Model.Pagina + 2); i++)
+                {
+                    <li class="page-item @(i == Model.Pagina ? "active" : "")">
+                        <a class="page-link" href="@Pag(i)">@i</a>
+                    </li>
+                }
+                <li class="page-item @(Model.Pagina == Model.TotalPaginas ? "disabled" : "")">
+                    <a class="page-link" href="@Pag(Model.Pagina + 1)">Siguiente</a>
+                </li>
+            </ul>
+        </nav>
+    }
+}
