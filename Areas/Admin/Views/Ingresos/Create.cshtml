@@ -1,0 +1,83 @@
+@model IngresoFormViewModel
+@{
+    ViewData["Title"] = "Registrar ingreso";
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <h1 class="h3 mb-0">Registrar ingreso de mercadería</h1>
+    <a asp-action="Index" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left" aria-hidden="true"></i> Volver al listado</a>
+</div>
+
+<form id="formIngreso" asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header fw-medium d-flex justify-content-between align-items-center">
+                    Productos
+                    <button type="button" id="btnAgregarFila" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-plus-lg" aria-hidden="true"></i> Agregar producto
+                    </button>
+                </div>
+                <div class="card-body bg-light" id="filasIngreso">
+                    @for (var i = 0; i < Model.Detalles.Count; i++)
+                    {
+                        <partial name="_FilaIngreso" model="@(new FilaIngresoViewModel { Indice = i.ToString(), Numero = i + 1, Fila = Model.Detalles[i], Productos = Model.Productos })" />
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card mb-3">
+                <div class="card-header fw-medium">Comprobante</div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label asp-for="Proveedor" class="form-label"></label>
+                        <input asp-for="Proveedor" class="form-control" maxlength="150" />
+                        <span asp-validation-for="Proveedor" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="NumeroComprobante" class="form-label"></label>
+                        <input asp-for="NumeroComprobante" class="form-control" maxlength="50" placeholder="0001-00012345" />
+                        <span asp-validation-for="NumeroComprobante" class="text-danger small"></span>
+                    </div>
+                    <div>
+                        <label asp-for="Observaciones" class="form-label"></label>
+                        <textarea asp-for="Observaciones" class="form-control" rows="2" maxlength="300"></textarea>
+                        <span asp-validation-for="Observaciones" class="text-danger small"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>Unidades</span><span id="totalUnidades" class="fw-semibold">0</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-baseline">
+                        <span>Costo total</span><span id="totalIngreso" class="precio-final">$ 0,00</span>
+                    </div>
+                    <p class="small text-muted mt-2 mb-0">Al registrar, el stock de cada producto aumenta en la cantidad indicada.</p>
+                </div>
+            </div>
+
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary btn-lg">Registrar ingreso</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Cancelar</a>
+            </div>
+        </div>
+    </div>
+</form>
+
+@* Plantilla de una fila vacía: el JavaScript la copia al tocar "Agregar producto" *@
+<template id="plantillaFila">
+    <partial name="_FilaIngreso" model="@(new FilaIngresoViewModel { Indice = "__i__", Numero = 0, Productos = Model.Productos })" />
+</template>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/validacion-decimal.js" asp-append-version="true"></script>
+    <script src="~/js/admin-ingresos.js" asp-append-version="true"></script>
+}

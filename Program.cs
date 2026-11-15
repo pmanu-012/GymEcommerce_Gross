@@ -55,6 +55,7 @@ builder.Services.AddScoped<CatalogoService>();
 builder.Services.AddScoped<ImagenService>();
 builder.Services.AddScoped<CarritoService>();
 builder.Services.AddScoped<PedidoService>();
+builder.Services.AddScoped<IngresoService>();
 builder.Services.Configure<OpcionesTienda>(builder.Configuration.GetSection("Tienda"));
 
 builder.Services.AddControllersWithViews(options =>

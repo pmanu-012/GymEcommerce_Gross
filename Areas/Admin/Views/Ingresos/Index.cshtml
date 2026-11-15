@@ -1,0 +1,124 @@
+@model IngresoListadoViewModel
+@using GymEcommerce.Services
+@{
+    ViewData["Title"] = "Ingresos";
+
+    string Pag(int pagina) => Url.Action("Index", new
+    {
+        q = Model.Q,
+        desde = Model.Desde?.ToString("yyyy-MM-dd"),
+        hasta = Model.Hasta?.ToString("yyyy-MM-dd"),
+        estado = Model.Estado,
+        pagina
+    })!;
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <h1 class="h3 mb-0">Ingresos de mercadería</h1>
+    <a class="btn btn-primary" asp-action="Create"><i class="bi bi-plus-lg" aria-hidden="true"></i> Registrar ingreso</a>
+</div>
+
+<form method="get" class="row g-2 align-items-end mb-3">
+    <div class="col-md-4">
+        <label asp-for="Q" class="form-label small mb-1">Proveedor o comprobante</label>
+        <input asp-for="Q" class="form-control" />
+    </div>
+    <div class="col-6 col-md-2">
+        <label asp-for="Desde" class="form-label small mb-1">Desde</label>
+        <input asp-for="Desde" type="date" class="form-control" />
+    </div>
+    <div class="col-6 col-md-2">
+        <label asp-for="Hasta" class="form-label small mb-1">Hasta</label>
+        <input asp-for="Hasta" type="date" class="form-control" />
+    </div>
+    <div class="col-md-2">
+        <label asp-for="Estado" class="form-label small mb-1">Estado</label>
+        <select asp-for="Estado" class="form-select">
+            <option value="todos">Todos</option>
+            <option value="vigentes">Vigentes</option>
+            <option value="anulados">Anulados</option>
+        </select>
+    </div>
+    <div class="col-md-2 d-grid">
+        <button type="submit" class="btn btn-outline-primary">Filtrar</button>
+    </div>
+</form>
+
+<p class="text-muted small">@Model.Total @(Model.Total == 1 ? "ingreso" : "ingresos")</p>
+
+@if (Model.Ingresos.Count == 0)
+{
+    <div class="alert alert-info">No hay ingresos con esos filtros.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle tabla-admin bg-white">
+            <thead>
+                <tr>
+                    <th>N°</th>
+                    <th>Fecha</th>
+                    <th>Proveedor</th>
+                    <th>Registró</th>
+                    <th class="text-end">Unidades</th>
+                    <th class="text-end">Costo total</th>
+                    <th>Estado</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var i in Model.Ingresos)
+                {
+                    <tr class="@(i.Anulado ? "text-muted" : "")">
+                        <td class="fw-medium">#@i.IdIngreso</td>
+                        <td class="text-nowrap">@Fechas.ALocal(i.Fecha).ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>
+                            <div>@i.Proveedor</div>
+                            @if (!string.IsNullOrEmpty(i.NumeroComprobante))
+                            {
+                                <div class="small text-muted">Comp. @i.NumeroComprobante</div>
+                            }
+                        </td>
+                        <td>@i.Usuario</td>
+                        <td class="text-end">@i.Unidades</td>
+                        <td class="text-end text-nowrap">@i.Total.ToString("C")</td>
+                        <td>
+                            @if (i.Anulado)
+                            {
+                                <span class="badge text-bg-secondary">Anulado</span>
+                            }
+                            else
+                            {
+                                <span class="badge text-bg-success">Vigente</span>
+                            }
+                        </td>
+                        <td class="text-end">
+                            <a class="btn btn-sm btn-outline-primary" asp-action="Detalle" asp-route-id="@i.IdIngreso"
+                               aria-label="Ver ingreso @i.IdIngreso">Ver</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (Model.TotalPaginas > 1)
+    {
+        <nav aria-label="Paginación">
+            <ul class="pagination justify-content-center">
+                <li class="page-item @(Model.Pagina == 1 ? "disabled" : "")">
+                    <a class="page-link" href="@Pag(Model.Pagina - 1)">Anterior</a>
+                </li>
+                @for (var p = Math.Max(1, Model.Pagina - 2); p <= Math.Min(Model.TotalPaginas, Model.Pagina + 2); p++)
+                {
+                    <li class="page-item @(p == Model.Pagina ? "active" : "")">
+                        <a class="page-link" href="@Pag(p)">@p</a>
+                    </li>
+                }
+                <li class="page-item @(Model.Pagina == Model.TotalPaginas ? "disabled" : "")">
+                    <a class="page-link" href="@Pag(Model.Pagina + 1)">Siguiente</a>
+                </li>
+            </ul>
+        </nav>
+    }
+}

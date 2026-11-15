@@ -113,7 +113,7 @@ public class ProductosController : Controller
             Descripcion = Limpiar(vm.Descripcion),
             Precio = vm.Precio!.Value,
             PorcentajeDescuento = vm.PorcentajeDescuento > 0 ? vm.PorcentajeDescuento : null,
-            Stock = vm.Stock!.Value,
+            Stock = 0, // el stock inicial se carga con un ingreso de mercadería,
             Uso = Limpiar(vm.Uso),
             Material = Limpiar(vm.Material),
             IdSubcategoria = vm.IdSubcategoria!.Value,
@@ -185,6 +185,8 @@ public class ProductosController : Controller
         if (producto is null)
             return NotFound();
 
+        vm.Stock = producto.Stock; // para mostrarlo si hay que volver a dibujar el formulario
+
         await ValidarSubcategoriaAsync(vm);
         if (!ModelState.IsValid)
         {
@@ -221,7 +223,6 @@ public class ProductosController : Controller
         producto.Descripcion = Limpiar(vm.Descripcion);
         producto.Precio = vm.Precio!.Value;
         producto.PorcentajeDescuento = vm.PorcentajeDescuento > 0 ? vm.PorcentajeDescuento : null;
-        producto.Stock = vm.Stock!.Value;
         producto.Uso = Limpiar(vm.Uso);
         producto.Material = Limpiar(vm.Material);
         producto.IdSubcategoria = vm.IdSubcategoria!.Value;

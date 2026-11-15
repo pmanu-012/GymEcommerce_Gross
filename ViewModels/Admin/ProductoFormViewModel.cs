@@ -25,9 +25,7 @@ public class ProductoFormViewModel
     [Display(Name = "Descuento (%)")]
     public decimal? PorcentajeDescuento { get; set; }
 
-    [Required(ErrorMessage = "El stock es obligatorio.")]
-    [Range(0, 1000000, ErrorMessage = "El stock debe ser 0 o más.")]
-    [Display(Name = "Stock")]
+    // Solo se muestra: el stock se modifica con ingresos de mercadería y con ventas
     public int? Stock { get; set; }
 
     [StringLength(100, ErrorMessage = "Máximo {1} caracteres.")]

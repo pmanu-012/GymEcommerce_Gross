@@ -22,6 +22,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<ResenaProducto> ResenasProducto { get; set; } = null!;
     public DbSet<ResenaPlataforma> ResenasPlataforma { get; set; } = null!;
     public DbSet<Auditoria> Auditorias { get; set; } = null!;
+    public DbSet<IngresoMercaderia> IngresosMercaderia { get; set; } = null!;
+    public DbSet<DetalleIngreso> DetallesIngreso { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder b)
     {
@@ -123,6 +125,29 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
             e.HasOne(r => r.Usuario).WithMany(u => u.ResenasPlataforma)
                 .HasForeignKey(r => r.IdUsuario).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        // ---------- Ingresos de mercadería ----------
+        b.Entity<IngresoMercaderia>(e =>
+        {
+            e.HasIndex(i => i.Fecha);
+            e.HasOne(i => i.Usuario).WithMany()
+                .HasForeignKey(i => i.IdUsuario).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        b.Entity<DetalleIngreso>(e =>
+        {
+            e.Property(d => d.CostoUnitario).HasPrecision(18, 2);
+            e.HasIndex(d => new { d.IdIngreso, d.IdProducto }).IsUnique();
+            e.ToTable(t =>
+            {
+                 t.HasCheckConstraint("CK_DetallesIngreso_Cantidad", "[Cantidad] > 0");
+                 t.HasCheckConstraint("CK_DetallesIngreso_Costo", "[CostoUnitario] >= 0");
+            });
+            e.HasOne(d => d.Ingreso).WithMany(i => i.Detalles)
+                .HasForeignKey(d => d.IdIngreso).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(d => d.Producto).WithMany()
+                .HasForeignKey(d => d.IdProducto).OnDelete(DeleteBehavior.Restrict);
         });
 
         // ---------- Auditoría ----------

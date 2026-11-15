@@ -104,6 +104,10 @@ else
                                title="Editar" aria-label="Editar @p.Nombre">
                                 <i class="bi bi-pencil" aria-hidden="true"></i>
                             </a>
+                            <a class="btn btn-sm btn-outline-secondary" asp-controller="Ingresos" asp-action="Create"
+                               asp-route-idProducto="@p.IdProducto" title="Registrar ingreso" aria-label="Registrar ingreso de @p.Nombre">
+                                <i class="bi bi-box-arrow-in-down" aria-hidden="true"></i>
+                            </a>
                             <button type="button"
                                     class="btn btn-sm @(p.Activo ? "btn-outline-danger" : "btn-outline-success") js-estado"
                                     data-url="@Url.Action("CambiarEstado", new { id = p.IdProducto })"

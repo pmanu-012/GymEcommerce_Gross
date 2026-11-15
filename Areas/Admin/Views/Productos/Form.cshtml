@@ -70,9 +70,16 @@
                             <span asp-validation-for="PorcentajeDescuento" class="text-danger"></span>
                         </div>
                         <div class="col-sm-4">
-                            <label asp-for="Stock" class="form-label"></label>
-                            <input asp-for="Stock" class="form-control" type="number" min="0" />
-                            <span asp-validation-for="Stock" class="text-danger"></span>
+                            <div class="form-label">Stock</div>
+                             <div class="form-control-plaintext fw-semibold py-1">@(Model.Stock ?? 0) unidades</div>
+                             @if (esEdicion)
+                             {
+                                  <a class="small" asp-controller="Ingresos" asp-action="Create" asp-route-idProducto="@Model.IdProducto">Registrar ingreso</a>
+                             }
+                             else
+                             {
+                                  <div class="form-text">Se carga con un ingreso de mercadería después de crear el producto.</div>
+                             }
                         </div>
                     </div>
                 </div>

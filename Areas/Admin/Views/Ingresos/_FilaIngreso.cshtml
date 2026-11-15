@@ -1,0 +1,54 @@
+@model FilaIngresoViewModel
+@{
+    // Los nombres "Detalles[0].Cantidad", "Detalles[1].Cantidad"... permiten que MVC arme la lista al recibir el formulario.
+    // La validación de cliente se declara con atributos data-val (lo mismo que generan los tag helpers).
+    var i = Model.Indice;
+    string? Error(string campo) => ViewData.ModelState[$"Detalles[{i}].{campo}"]?.Errors.FirstOrDefault()?.ErrorMessage;
+    string ClaseError(string campo) => Error(campo) is null ? "field-validation-valid" : "field-validation-error";
+}
+
+<div class="fila-ingreso card card-body p-2 mb-2">
+    <div class="d-flex justify-content-between align-items-center mb-1">
+        <span class="small text-muted">Producto <span class="js-numero-fila">@Model.Numero</span></span>
+        <button type="button" class="btn btn-sm btn-link text-danger p-0 js-quitar-fila" title="Quitar" aria-label="Quitar esta fila">
+            <i class="bi bi-x-lg" aria-hidden="true"></i>
+        </button>
+    </div>
+
+    <div class="row g-2">
+        <div class="col-12 col-md-6">
+            <label class="form-label small mb-1" for="Detalles_@(i)__IdProducto">Producto</label>
+            <select class="form-select js-producto" id="Detalles_@(i)__IdProducto" name="Detalles[@i].IdProducto"
+                    data-val="true" data-val-required="Elegí un producto.">
+                <option value="">Elegí un producto</option>
+                @foreach (var p in Model.Productos)
+                {
+                    <option value="@p.Id" selected="@(Model.Fila.IdProducto == p.Id)">@p.Nombre (stock: @p.Stock)@(p.Activo ? "" : " · de baja")</option>
+                }
+            </select>
+            <span class="text-danger small @ClaseError("IdProducto")" data-valmsg-for="Detalles[@i].IdProducto" data-valmsg-replace="true">@Error("IdProducto")</span>
+        </div>
+
+        <div class="col-6 col-md-3">
+            <label class="form-label small mb-1" for="Detalles_@(i)__Cantidad">Cantidad</label>
+            <input type="number" class="form-control js-cantidad" id="Detalles_@(i)__Cantidad" name="Detalles[@i].Cantidad"
+                   value="@Model.Fila.Cantidad" min="1" max="100000" step="1"
+                   data-val="true" data-val-required="Ingresá la cantidad."
+                   data-val-range="La cantidad debe estar entre 1 y 100.000." data-val-range-min="1" data-val-range-max="100000" />
+            <span class="text-danger small @ClaseError("Cantidad")" data-valmsg-for="Detalles[@i].Cantidad" data-valmsg-replace="true">@Error("Cantidad")</span>
+        </div>
+
+        <div class="col-6 col-md-3">
+            <label class="form-label small mb-1" for="Detalles_@(i)__CostoUnitario">Costo unitario</label>
+            <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input type="text" inputmode="decimal" autocomplete="off" class="form-control js-costo"
+                       id="Detalles_@(i)__CostoUnitario" name="Detalles[@i].CostoUnitario"
+                       value="@(Model.Fila.CostoUnitario?.ToString("0.##"))"
+                       data-val="true" data-val-required="Ingresá el costo." data-val-number="Ingresá un número válido."
+                       data-val-range="El costo debe ser 0 o más." data-val-range-min="0" data-val-range-max="100000000" />
+            </div>
+            <span class="text-danger small @ClaseError("CostoUnitario")" data-valmsg-for="Detalles[@i].CostoUnitario" data-valmsg-replace="true">@Error("CostoUnitario")</span>
+        </div>
+    </div>
+</div>

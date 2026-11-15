@@ -195,6 +195,42 @@ namespace GymEcommerce.Migrations
                     b.ToTable("Categorias");
                 });
 
+            modelBuilder.Entity("GymEcommerce.Models.DetalleIngreso", b =>
+                {
+                    b.Property<int>("IdDetalleIngreso")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdDetalleIngreso"));
+
+                    b.Property<int>("Cantidad")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("CostoUnitario")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("IdIngreso")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IdProducto")
+                        .HasColumnType("int");
+
+                    b.HasKey("IdDetalleIngreso");
+
+                    b.HasIndex("IdProducto");
+
+                    b.HasIndex("IdIngreso", "IdProducto")
+                        .IsUnique();
+
+                    b.ToTable("DetallesIngreso", t =>
+                        {
+                            t.HasCheckConstraint("CK_DetallesIngreso_Cantidad", "[Cantidad] > 0");
+
+                            t.HasCheckConstraint("CK_DetallesIngreso_Costo", "[CostoUnitario] >= 0");
+                        });
+                });
+
             modelBuilder.Entity("GymEcommerce.Models.DetallePedido", b =>
                 {
                     b.Property<int>("IdDetalle")
@@ -268,6 +304,49 @@ namespace GymEcommerce.Migrations
                         .IsUnique();
 
                     b.ToTable("GruposMusculares");
+                });
+
+            modelBuilder.Entity("GymEcommerce.Models.IngresoMercaderia", b =>
+                {
+                    b.Property<int>("IdIngreso")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdIngreso"));
+
+                    b.Property<bool>("Anulado")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("FechaAnulacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("IdUsuario")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("NumeroComprobante")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Observaciones")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<string>("Proveedor")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.HasKey("IdIngreso");
+
+                    b.HasIndex("Fecha");
+
+                    b.HasIndex("IdUsuario");
+
+                    b.ToTable("IngresosMercaderia");
                 });
 
             modelBuilder.Entity("GymEcommerce.Models.Pedido", b =>
@@ -697,6 +776,25 @@ namespace GymEcommerce.Migrations
                     b.Navigation("Usuario");
                 });
 
+            modelBuilder.Entity("GymEcommerce.Models.DetalleIngreso", b =>
+                {
+                    b.HasOne("GymEcommerce.Models.IngresoMercaderia", "Ingreso")
+                        .WithMany("Detalles")
+                        .HasForeignKey("IdIngreso")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GymEcommerce.Models.Producto", "Producto")
+                        .WithMany()
+                        .HasForeignKey("IdProducto")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Ingreso");
+
+                    b.Navigation("Producto");
+                });
+
             modelBuilder.Entity("GymEcommerce.Models.DetallePedido", b =>
                 {
                     b.HasOne("GymEcommerce.Models.Pedido", "Pedido")
@@ -714,6 +812,17 @@ namespace GymEcommerce.Migrations
                     b.Navigation("Pedido");
 
                     b.Navigation("Producto");
+                });
+
+            modelBuilder.Entity("GymEcommerce.Models.IngresoMercaderia", b =>
+                {
+                    b.HasOne("GymEcommerce.Models.ApplicationUser", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("IdUsuario")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("GymEcommerce.Models.Pedido", b =>
@@ -894,6 +1003,11 @@ namespace GymEcommerce.Migrations
             modelBuilder.Entity("GymEcommerce.Models.GrupoMuscular", b =>
                 {
                     b.Navigation("ProductoGruposMusculares");
+                });
+
+            modelBuilder.Entity("GymEcommerce.Models.IngresoMercaderia", b =>
+                {
+                    b.Navigation("Detalles");
                 });
 
             modelBuilder.Entity("GymEcommerce.Models.Pedido", b =>

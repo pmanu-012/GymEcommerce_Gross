@@ -1,0 +1,105 @@
+@model IngresoDetalleViewModel
+@using GymEcommerce.Services
+@{
+    ViewData["Title"] = $"Ingreso #{Model.IdIngreso}";
+}
+
+@Html.AntiForgeryToken()
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <div>
+        <h1 class="h3 mb-0">
+            Ingreso #@Model.IdIngreso
+            @if (Model.Anulado)
+            {
+                <span class="badge text-bg-secondary fs-6 align-middle">Anulado</span>
+            }
+        </h1>
+        <div class="text-muted small">@Fechas.ALocal(Model.Fecha).ToString("dd/MM/yyyy HH:mm")</div>
+    </div>
+    <a asp-action="Index" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left" aria-hidden="true"></i> Volver al listado</a>
+</div>
+
+@if (Model.Anulado && Model.FechaAnulacion.HasValue)
+{
+    <div class="alert alert-secondary">
+        Anulado el @Fechas.ALocal(Model.FechaAnulacion.Value).ToString("dd/MM/yyyy HH:mm"). Las unidades de este ingreso se descontaron del stock.
+    </div>
+}
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="table-responsive">
+            <table class="table align-middle tabla-admin bg-white">
+                <thead>
+                    <tr>
+                        <th style="width:64px"></th>
+                        <th>Producto</th>
+                        <th class="text-end">Cantidad</th>
+                        <th class="text-end">Costo unitario</th>
+                        <th class="text-end">Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td><img class="miniatura" src="@Url.Content(item.ImagenUrl ?? "~/img/sin-imagen.svg")" alt="" /></td>
+                            <td>
+                                <a asp-controller="Productos" asp-action="Edit" asp-route-id="@item.IdProducto" class="text-decoration-none">@item.Nombre</a>
+                            </td>
+                            <td class="text-end">@item.Cantidad</td>
+                            <td class="text-end text-nowrap">@item.CostoUnitario.ToString("C")</td>
+                            <td class="text-end text-nowrap">@item.Subtotal.ToString("C")</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr class="fw-semibold">
+                        <td colspan="2" class="text-end">Total</td>
+                        <td class="text-end">@Model.Unidades</td>
+                        <td></td>
+                        <td class="text-end text-nowrap">@Model.Total.ToString("C")</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card mb-3">
+            <div class="card-header fw-medium">Datos del ingreso</div>
+            <div class="card-body">
+                <dl class="mb-0">
+                    <dt class="small text-muted fw-normal">Proveedor</dt>
+                    <dd>@Model.Proveedor</dd>
+                    @if (!string.IsNullOrEmpty(Model.NumeroComprobante))
+                    {
+                        <dt class="small text-muted fw-normal">Comprobante</dt>
+                        <dd>@Model.NumeroComprobante</dd>
+                    }
+                    <dt class="small text-muted fw-normal">Registró</dt>
+                    <dd>@Model.Usuario</dd>
+                    @if (!string.IsNullOrEmpty(Model.Observaciones))
+                    {
+                        <dt class="small text-muted fw-normal">Observaciones</dt>
+                        <dd class="mb-0">@Model.Observaciones</dd>
+                    }
+                </dl>
+            </div>
+        </div>
+
+        @if (!Model.Anulado)
+        {
+            <button type="button" class="btn btn-outline-danger w-100 js-anular-ingreso"
+                    data-url="@Url.Action("Anular", new { id = Model.IdIngreso })" data-id="@Model.IdIngreso">
+                Anular ingreso
+            </button>
+            <p class="small text-muted mt-2">Anular descuenta del stock las unidades de este ingreso. Si ya se vendieron, no se puede anular.</p>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/admin-ingresos.js" asp-append-version="true"></script>
+}
