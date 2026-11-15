@@ -1,0 +1,87 @@
+@model PedidoListadoAdminViewModel
+@using GymEcommerce.Services
+@{
+    ViewData["Title"] = "Pedidos";
+
+    string Pag(int pagina) => Url.Action("Index", new { q = Model.Q, estado = Model.Estado, pagina })!;
+}
+
+<h1 class="h3 mb-3">Pedidos</h1>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-6">
+        <input asp-for="Q" class="form-control" placeholder="N° de pedido, cliente o email..." aria-label="Buscar pedido" />
+    </div>
+    <div class="col-md-4">
+        <select asp-for="Estado" class="form-select" aria-label="Estado"
+                asp-items="Html.GetEnumSelectList<EstadoPedido>()">
+            <option value="">Todos los estados</option>
+        </select>
+    </div>
+    <div class="col-md-2 d-grid">
+        <button type="submit" class="btn btn-outline-primary">Filtrar</button>
+    </div>
+</form>
+
+<p class="text-muted small">@Model.Total @(Model.Total == 1 ? "pedido" : "pedidos")</p>
+
+@if (Model.Pedidos.Count == 0)
+{
+    <div class="alert alert-info">No hay pedidos con esos filtros.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle tabla-admin bg-white">
+            <thead>
+                <tr>
+                    <th>N°</th>
+                    <th>Fecha</th>
+                    <th>Cliente</th>
+                    <th>Estado</th>
+                    <th class="text-end">Total</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in Model.Pedidos)
+                {
+                    <tr>
+                        <td class="fw-medium">#@p.IdPedido</td>
+                        <td class="text-nowrap">@Fechas.ALocal(p.Fecha).ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>
+                            <div>@p.Cliente</div>
+                            <div class="small text-muted">@p.Email</div>
+                        </td>
+                        <td><span class="badge @p.Estado.ClaseBadge()">@p.Estado.Texto()</span></td>
+                        <td class="text-end text-nowrap">@p.Total.ToString("C")</td>
+                        <td class="text-end">
+                            <a class="btn btn-sm btn-outline-primary" asp-action="Detalle" asp-route-id="@p.IdPedido"
+                               aria-label="Ver pedido @p.IdPedido">Ver</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (Model.TotalPaginas > 1)
+    {
+        <nav aria-label="Paginación">
+            <ul class="pagination justify-content-center">
+                <li class="page-item @(Model.Pagina == 1 ? "disabled" : "")">
+                    <a class="page-link" href="@Pag(Model.Pagina - 1)">Anterior</a>
+                </li>
+                @for (var i = Math.Max(1, Model.Pagina - 2); i <= Math.Min(Model.TotalPaginas, Model.Pagina + 2); i++)
+                {
+                    <li class="page-item @(i == Model.Pagina ? "active" : "")">
+                        <a class="page-link" href="@Pag(i)">@i</a>
+                    </li>
+                }
+                <li class="page-item @(Model.Pagina == Model.TotalPaginas ? "disabled" : "")">
+                    <a class="page-link" href="@Pag(Model.Pagina + 1)">Siguiente</a>
+                </li>
+            </ul>
+        </nav>
+    }
+}

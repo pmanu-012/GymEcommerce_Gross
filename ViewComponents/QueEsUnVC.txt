@@ -1,0 +1,3 @@
+Un ViewComponent (componente de vista) es un objeto o bloque de código autónomo que encapsula 
+tanto la lógica (en Ruby, C#, etc.) como la plantilla HTML para generar elementos 
+de interfaz de usuario reutilizables

@@ -1,0 +1,107 @@
+@model GymEcommerce.ViewModels.PedidoDetalleViewModel
+@using GymEcommerce.Models
+@using GymEcommerce.Services
+@{
+    ViewData["Title"] = $"Pedido #{Model.IdPedido}";
+    var esNuevo = TempData["PedidoNuevo"] is true;
+    var pasos = new[] { EstadoPedido.Pendiente, EstadoPedido.Confirmado, EstadoPedido.Enviado, EstadoPedido.Entregado };
+    var pasoActual = Array.IndexOf(pasos, Model.Estado);
+}
+
+@if (esNuevo)
+{
+    <div class="alert alert-success d-flex gap-3 align-items-center" role="status">
+        <i class="bi bi-check-circle-fill fs-3" aria-hidden="true"></i>
+        <div>
+            <div class="fw-semibold">¡Gracias por tu compra!</div>
+            <div>Tu pedido #@Model.IdPedido quedó registrado. Te avisaremos cuando cambie de estado.</div>
+        </div>
+    </div>
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="Index">Mis pedidos</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Pedido #@Model.IdPedido</li>
+    </ol>
+</nav>
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <div>
+        <h1 class="h3 mb-0">Pedido #@Model.IdPedido</h1>
+        <div class="text-muted small">@Fechas.ALocal(Model.Fecha).ToString("dd/MM/yyyy HH:mm")</div>
+    </div>
+    <span class="badge fs-6 @Model.Estado.ClaseBadge()">@Model.Estado.Texto()</span>
+</div>
+
+@if (Model.Estado == EstadoPedido.Cancelado)
+{
+    <div class="alert alert-secondary">Este pedido fue cancelado.</div>
+}
+else
+{
+    <ol class="gs-pasos mb-4" aria-label="Seguimiento del pedido">
+        @for (var i = 0; i < pasos.Length; i++)
+        {
+            <li class="@(i < pasoActual ? "hecho" : i == pasoActual ? "actual" : "")"
+                aria-current="@(i == pasoActual ? "step" : null)">
+                @pasos[i].Texto()
+            </li>
+        }
+    </ol>
+}
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card">
+            <ul class="list-group list-group-flush">
+                @foreach (var item in Model.Items)
+                {
+                    <li class="list-group-item d-flex gap-3 align-items-center">
+                        <img class="carrito-img" src="@Url.Content(item.ImagenUrl ?? "~/img/sin-imagen.svg")" alt="" />
+                        <div class="flex-grow-1">
+                            <a asp-controller="Catalogo" asp-action="Detalle" asp-route-id="@item.IdProducto"
+                               class="fw-medium text-dark text-decoration-none">@item.Nombre</a>
+                            <div class="small text-muted">@item.Cantidad × @item.PrecioUnitario.ToString("C")</div>
+                        </div>
+                        <div class="fw-semibold text-nowrap">@item.Subtotal.ToString("C")</div>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between mb-1"><span>Subtotal</span><span>@Model.Subtotal.ToString("C")</span></div>
+                <div class="d-flex justify-content-between mb-1">
+                    <span>Envío</span><span>@(Model.CostoEnvio == 0 ? "Gratis" : Model.CostoEnvio.ToString("C"))</span>
+                </div>
+                <hr />
+                <div class="d-flex justify-content-between align-items-baseline">
+                    <span class="fw-semibold">Total</span>
+                    <span class="precio-final">@Model.Total.ToString("C")</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-body">
+                <h2 class="h6 mb-2">Envío a</h2>
+                <div>@Model.Calle @Model.Numero</div>
+                <div>@Model.Ciudad, @Model.Provincia</div>
+                <div class="text-muted small">CP @Model.CodigoPostal</div>
+            </div>
+        </div>
+
+        @if (Model.PuedeCancelarCliente)
+        {
+            <button type="button" class="btn btn-outline-danger w-100 js-cancelar-pedido"
+                    data-url="@Url.Action("Cancelar", new { id = Model.IdPedido })"
+                    data-id="@Model.IdPedido">
+                Cancelar pedido
+            </button>
+        }
+    </div>
+</div>

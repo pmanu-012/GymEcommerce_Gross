@@ -1,0 +1,39 @@
+@model List<GymEcommerce.ViewModels.PedidoResumenViewModel>
+@using GymEcommerce.Services
+@{
+    ViewData["Title"] = "Mis pedidos";
+}
+
+<h1 class="h3 mb-4">Mis pedidos</h1>
+
+@if (Model.Count == 0)
+{
+    <div class="text-center py-5">
+        <i class="bi bi-bag display-4 text-muted" aria-hidden="true"></i>
+        <p class="lead mt-3">Todavía no hiciste ningún pedido.</p>
+        <a asp-controller="Catalogo" asp-action="Index" class="btn btn-primary">Ver catálogo</a>
+    </div>
+}
+else
+{
+    <div class="list-group">
+        @foreach (var p in Model)
+        {
+            <a asp-action="Detalle" asp-route-id="@p.IdPedido"
+               class="list-group-item list-group-item-action py-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <div>
+                    <div class="fw-semibold">Pedido #@p.IdPedido</div>
+                    <div class="small text-muted">
+                        @Fechas.ALocal(p.Fecha).ToString("dd/MM/yyyy HH:mm") ·
+                        @p.CantidadProductos @(p.CantidadProductos == 1 ? "producto" : "productos")
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <span class="badge @p.Estado.ClaseBadge()">@p.Estado.Texto()</span>
+                    <span class="precio-final fs-5">@p.Total.ToString("C")</span>
+                    <i class="bi bi-chevron-right text-muted" aria-hidden="true"></i>
+                </div>
+            </a>
+        }
+    </div>
+}

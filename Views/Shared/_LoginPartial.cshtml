@@ -11,6 +11,10 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
                 <li><span class="dropdown-item-text small text-muted">@User.Identity?.Name</span></li>
+                @if (User.IsInRole(Roles.Cliente))
+                {
+                  <li><a class="dropdown-item" asp-area="" asp-controller="Pedidos" asp-action="Index"><i class="bi bi-bag" aria-hidden="true"></i> Mis pedidos</a></li>
+                }
                 @if (User.IsInRole(Roles.Administrador))
                 {
                   <li><a class="dropdown-item" asp-area="Admin" asp-controller="Productos" asp-action="Index"><i class="bi bi-speedometer2" aria-hidden="true"></i> Panel de administración</a></li>

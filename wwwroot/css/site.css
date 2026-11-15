@@ -287,3 +287,114 @@ h1, h2, h3, h4, h5, h6,
 
 .gs-footer a { color: #D1D5DB; text-decoration: none; }
 .gs-footer a:hover { color: var(--gs-acento); }
+
+/* ---------- Carrito y pedidos ---------- */
+.gs-contador {
+    position: absolute;
+    top: .1rem;
+    right: -.35rem;
+    background: var(--gs-acento);
+    color: var(--gs-carbon);
+    font-size: .7rem;
+}
+
+.carrito-img {
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+    border-radius: var(--bs-border-radius);
+    border: 1px solid #E5E7EB;
+}
+
+.carrito-item-problema {
+    background: #FFF5F5;
+}
+
+.cantidad-control {
+    width: 128px;
+}
+
+    .cantidad-control input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+    }
+
+.min-w-0 {
+    min-width: 0;
+}
+
+@media (min-width: 992px) {
+    .carrito-resumen {
+        position: sticky;
+        top: 90px;
+    }
+}
+
+/* Seguimiento del pedido */
+.gs-pasos {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    counter-reset: paso;
+}
+
+    .gs-pasos li {
+        flex: 1;
+        position: relative;
+        text-align: center;
+        font-size: .85rem;
+        color: var(--gs-gris);
+        counter-increment: paso;
+    }
+
+        .gs-pasos li::before {
+            content: counter(paso);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            margin: 0 auto .4rem;
+            border-radius: 50%;
+            background: #E5E7EB;
+            font-weight: 600;
+            position: relative;
+            z-index: 1;
+        }
+
+        .gs-pasos li + li::after {
+            content: "";
+            position: absolute;
+            top: 1rem;
+            right: 50%;
+            width: 100%;
+            height: 3px;
+            background: #E5E7EB;
+        }
+
+        .gs-pasos li.hecho::before {
+            content: "✓";
+            background: var(--gs-carbon);
+            color: #fff;
+        }
+
+        .gs-pasos li.actual::before {
+            background: var(--gs-acento);
+            color: var(--gs-carbon);
+        }
+
+        .gs-pasos li.hecho,
+        .gs-pasos li.actual {
+            color: var(--gs-carbon);
+            font-weight: 500;
+        }
+
+            .gs-pasos li.hecho + li::after,
+            .gs-pasos li.hecho + li.actual::after {
+                background: var(--gs-carbon);
+            }
+
+/* SweetAlert2: texto oscuro sobre el botón naranja */
+.swal2-confirm.swal2-styled {
+    color: var(--gs-carbon) !important;
+    font-weight: 600;
+}

@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="~/GymEcommerce.styles.css" asp-append-version="true" />
 </head>
 <body class="d-flex flex-column min-vh-100">
+    @Html.AntiForgeryToken()
     <header>
         <nav class="navbar navbar-expand-lg gs-navbar sticky-top" data-bs-theme="dark">
             <div class="container">
@@ -41,9 +42,7 @@
                             <button class="btn btn-primary" type="submit" aria-label="Buscar"><i class="bi bi-search" aria-hidden="true"></i></button>
                         </div>
                     </form>
-
-                    @* Hito del carrito: acá va el ícono del carrito con la cantidad de items. *@
-
+                    @await Component.InvokeAsync("ContadorCarrito")
                     <partial name="_LoginPartial" />
                 </div>
             </div>
@@ -78,7 +77,21 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/js/alertas.js" asp-append-version="true"></script>
+    <script src="~/js/tienda.js" asp-append-version="true"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
+    @if (TempData["Exito"] is string exito)
+    {
+
+        <script>Alertas.exito(@Json.Serialize(exito));</script>
+    }
+    @if (TempData["Error"] is string error)
+    {
+
+        <script>Alertas.aviso('Atención', @Json.Serialize(error));</script>
+    }
 </body>
 </html>

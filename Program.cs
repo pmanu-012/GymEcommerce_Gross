@@ -32,12 +32,30 @@ builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Account/Login";
     options.AccessDeniedPath = "/Account/AccesoDenegado";
+    // En pedidos AJAX no se redirige al login: se responde 401/403 y el JavaScript decide qué hacer
+    options.Events.OnRedirectToLogin = ctx =>
+        {
+            if (ctx.Request.Headers.XRequestedWith == "XMLHttpRequest") ctx.Response.StatusCode = 401;
+            else ctx.Response.Redirect(ctx.RedirectUri);
+            return Task.CompletedTask;
+        }
+        ;
+    options.Events.OnRedirectToAccessDenied = ctx =>
+        {
+            if (ctx.Request.Headers.XRequestedWith == "XMLHttpRequest") ctx.Response.StatusCode = 403;
+            else ctx.Response.Redirect(ctx.RedirectUri);
+            return Task.CompletedTask;
+        }
+     ;
 });
 
 // Se usará en el hito de auditoría para saber qué usuario hizo cada cambio.
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<CatalogoService>();
 builder.Services.AddScoped<ImagenService>();
+builder.Services.AddScoped<CarritoService>();
+builder.Services.AddScoped<PedidoService>();
+builder.Services.Configure<OpcionesTienda>(builder.Configuration.GetSection("Tienda"));
 
 builder.Services.AddControllersWithViews(options =>
 {

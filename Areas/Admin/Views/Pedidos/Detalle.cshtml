@@ -1,0 +1,105 @@
+@model GymEcommerce.ViewModels.PedidoDetalleViewModel
+@using GymEcommerce.Services
+@{
+    ViewData["Title"] = $"Pedido #{Model.IdPedido}";
+}
+
+@Html.AntiForgeryToken()
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <div>
+        <h1 class="h3 mb-0">Pedido #@Model.IdPedido</h1>
+        <div class="text-muted small">@Fechas.ALocal(Model.Fecha).ToString("dd/MM/yyyy HH:mm")</div>
+    </div>
+    <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left" aria-hidden="true"></i> Volver al listado
+    </a>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body d-flex flex-wrap align-items-center gap-3">
+        <div>
+            <span class="text-muted small d-block">Estado actual</span>
+            <span class="badge fs-6 @Model.Estado.ClaseBadge()">@Model.Estado.Texto()</span>
+        </div>
+        <div class="ms-md-auto d-flex flex-wrap gap-2">
+            @if (Model.EstadosSiguientes.Count == 0)
+            {
+                <span class="text-muted small">Este pedido ya no admite cambios de estado.</span>
+            }
+            @foreach (var estado in Model.EstadosSiguientes)
+            {
+                var esCancelar = estado == EstadoPedido.Cancelado;
+                <button type="button"
+                        class="btn @(esCancelar ? "btn-outline-danger" : "btn-primary") js-cambiar-estado"
+                        data-url="@Url.Action("CambiarEstado", new { id = Model.IdPedido })"
+                        data-estado="@estado"
+                        data-texto="@estado.TextoAccion()"
+                        data-etiqueta="@estado.Texto()">
+                    @estado.TextoAccion()
+                </button>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="table-responsive">
+            <table class="table align-middle tabla-admin bg-white">
+                <thead>
+                    <tr>
+                        <th style="width:64px"></th>
+                        <th>Producto</th>
+                        <th class="text-end">Cantidad</th>
+                        <th class="text-end">Precio unitario</th>
+                        <th class="text-end">Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td><img class="miniatura" src="@Url.Content(item.ImagenUrl ?? "~/img/sin-imagen.svg")" alt="" /></td>
+                            <td>@item.Nombre</td>
+                            <td class="text-end">@item.Cantidad</td>
+                            <td class="text-end text-nowrap">@item.PrecioUnitario.ToString("C")</td>
+                            <td class="text-end text-nowrap">@item.Subtotal.ToString("C")</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr><td colspan="4" class="text-end">Subtotal</td><td class="text-end text-nowrap">@Model.Subtotal.ToString("C")</td></tr>
+                    <tr><td colspan="4" class="text-end">Envío</td><td class="text-end text-nowrap">@(Model.CostoEnvio == 0 ? "Gratis" : Model.CostoEnvio.ToString("C"))</td></tr>
+                    <tr class="fw-semibold"><td colspan="4" class="text-end">Total</td><td class="text-end text-nowrap">@Model.Total.ToString("C")</td></tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card mb-3">
+            <div class="card-header fw-medium">Cliente</div>
+            <div class="card-body">
+                <div>@Model.ClienteNombre</div>
+                <div class="small"><a href="mailto:@Model.ClienteEmail">@Model.ClienteEmail</a></div>
+                @if (!string.IsNullOrWhiteSpace(Model.ClienteTelefono))
+                {
+                    <div class="small text-muted">@Model.ClienteTelefono</div>
+                }
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header fw-medium">Envío</div>
+            <div class="card-body">
+                <div>@Model.Calle @Model.Numero</div>
+                <div>@Model.Ciudad, @Model.Provincia</div>
+                <div class="small text-muted">CP @Model.CodigoPostal</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/admin-pedidos.js" asp-append-version="true"></script>
+}

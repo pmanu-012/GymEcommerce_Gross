@@ -1,0 +1,12 @@
+@model GymEcommerce.ViewModels.CarritoViewModel
+@{
+    ViewData["Title"] = "Carrito";
+}
+
+<h1 class="h3 mb-4">Tu carrito</h1>
+
+<div id="carritoContenido"
+     data-url-actualizar="@Url.Action("ActualizarCantidad")"
+     data-url-quitar="@Url.Action("Quitar")">
+    <partial name="_CarritoContenido" model="Model" />
+</div>

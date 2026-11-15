@@ -25,6 +25,13 @@
                 <del class="text-muted small d-block">@Model.Precio.ToString("C")</del>
             }
             <div class="precio-final">@Model.PrecioFinal.ToString("C")</div>
+            @if (Model.Stock > 0 && User.Identity?.IsAuthenticated == true && !User.IsInRole(GymEcommerce.Models.Roles.Administrador))
+            {
+                <button type="button" class="btn btn-primary btn-sm w-100 mt-2 js-agregar"
+                        data-url="@Url.Action("Agregar", "Carrito", new { area = "" })" data-id="@Model.IdProducto">
+                    <i class="bi bi-cart-plus" aria-hidden="true"></i> Agregar
+                </button>
+            }
         </div>
     </div>
 </article>

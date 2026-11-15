@@ -48,6 +48,12 @@
                 <nav id="adminMenu" class="collapse d-lg-block" aria-label="Menú de administración">
                     <ul class="nav flex-column admin-nav">
                         <li class="nav-item">
+                            <a class="nav-link @(seccion == "Pedidos" ? "active" : "")"
+                               asp-area="Admin" asp-controller="Pedidos" asp-action="Index">
+                                <i class="bi bi-receipt" aria-hidden="true"></i> Pedidos
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link @(seccion == "Productos" ? "active" : "")"
                                asp-area="Admin" asp-controller="Productos" asp-action="Index">
                                 <i class="bi bi-box-seam" aria-hidden="true"></i> Productos
