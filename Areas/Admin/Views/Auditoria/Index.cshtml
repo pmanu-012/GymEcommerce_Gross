@@ -1,0 +1,171 @@
+@model AuditoriaListadoViewModel
+@using GymEcommerce.Services
+@{
+    ViewData["Title"] = "Auditoría";
+
+    object Filtros(int pagina) => new
+    {
+        desde = Model.Desde?.ToString("yyyy-MM-dd"),
+        hasta = Model.Hasta?.ToString("yyyy-MM-dd"),
+        usuario = Model.Usuario,
+        entidad = Model.Entidad,
+        accion = Model.Accion,
+        pagina
+    };
+
+    string Pag(int pagina) => Url.Action("Index", Filtros(pagina))!;
+
+    static string ClaseAccion(string accion) => accion switch
+    {
+        "Crear" => "text-bg-success",
+        "Editar" => "text-bg-info",
+        "Eliminar" => "text-bg-danger",
+        "Dar de baja" => "text-bg-secondary",
+        "Reactivar" => "text-bg-success",
+        _ => "text-bg-light"
+    };
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <h1 class="h3 mb-0">Auditoría</h1>
+    <a class="btn btn-outline-primary" href="@Url.Action("ExportarPdf", Filtros(1))" target="_blank">
+        <i class="bi bi-file-earmark-pdf" aria-hidden="true"></i> Exportar PDF
+    </a>
+</div>
+
+<form method="get" class="row g-2 align-items-end mb-3">
+    <div class="col-6 col-md-2">
+        <label asp-for="Desde" class="form-label small mb-1">Desde</label>
+        <input asp-for="Desde" type="date" class="form-control" />
+    </div>
+    <div class="col-6 col-md-2">
+        <label asp-for="Hasta" class="form-label small mb-1">Hasta</label>
+        <input asp-for="Hasta" type="date" class="form-control" />
+    </div>
+    <div class="col-md-3">
+        <label asp-for="Usuario" class="form-label small mb-1">Usuario</label>
+        <input asp-for="Usuario" class="form-control" placeholder="Nombre, email o &quot;sistema&quot;" />
+    </div>
+    <div class="col-6 col-md-2">
+        <label asp-for="Entidad" class="form-label small mb-1">Entidad</label>
+        <select asp-for="Entidad" class="form-select" asp-items="@(new SelectList(Model.Entidades))">
+            <option value="">Todas</option>
+        </select>
+    </div>
+    <div class="col-6 col-md-2">
+        <label asp-for="Accion" class="form-label small mb-1">Acción</label>
+        <select asp-for="Accion" class="form-select" asp-items="@(new SelectList(AuditoriaListadoViewModel.Acciones))">
+            <option value="">Todas</option>
+        </select>
+    </div>
+    <div class="col-md-1 d-grid">
+        <button type="submit" class="btn btn-outline-primary">Filtrar</button>
+    </div>
+</form>
+
+<p class="text-muted small">@Model.Total @(Model.Total == 1 ? "registro" : "registros")</p>
+
+@if (Model.Filas.Count == 0)
+{
+    <div class="alert alert-info">No hay registros con esos filtros.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table align-middle tabla-admin bg-white">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Usuario</th>
+                    <th>Acción</th>
+                    <th>Entidad</th>
+                    <th>Cambios</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var f in Model.Filas)
+                {
+                    <tr>
+                        <td class="text-nowrap small">@Fechas.ALocal(f.Fecha).ToString("dd/MM/yyyy HH:mm:ss")</td>
+                        <td>
+                            @if (f.Usuario is null)
+                            {
+                                <span class="text-muted">Sistema</span>
+                            }
+                            else
+                            {
+                                <div>@f.Usuario</div>
+                                <div class="small text-muted">@f.Email</div>
+                            }
+                        </td>
+                        <td><span class="badge @ClaseAccion(f.Accion)">@f.Accion</span></td>
+                        <td class="text-nowrap">@f.Entidad <span class="text-muted">#@f.IdEntidad</span></td>
+                        <td class="small" style="min-width:280px">
+                            @if (f.Cambios.Count == 0)
+                            {
+                                <span class="text-muted">Sin detalle</span>
+                            }
+                            else
+                            {
+                                <details>
+                                    <summary>@f.Cambios.Count @(f.Cambios.Count == 1 ? "campo" : "campos"): @string.Join(", ", f.Cambios.Take(3).Select(c => c.Campo))@(f.Cambios.Count > 3 ? "..." : "")</summary>
+                                    <table class="table table-sm mb-0 mt-2">
+                                        <thead>
+                                            <tr>
+                                                <th>Campo</th>
+                                                @if (f.Accion != "Crear")
+                                                {
+                                                    <th>Antes</th>
+                                                }
+                                                @if (f.Accion != "Eliminar")
+                                                {
+                                                    <th>Después</th>
+                                                }
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var c in f.Cambios)
+                                            {
+                                                <tr>
+                                                    <td class="fw-medium">@c.Campo</td>
+                                                    @if (f.Accion != "Crear")
+                                                    {
+                                                        <td class="text-break">@(c.Anterior ?? "—")</td>
+                                                    }
+                                                    @if (f.Accion != "Eliminar")
+                                                    {
+                                                        <td class="text-break">@(c.Nuevo ?? "—")</td>
+                                                    }
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </details>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (Model.TotalPaginas > 1)
+    {
+        <nav aria-label="Paginación">
+            <ul class="pagination justify-content-center">
+                <li class="page-item @(Model.Pagina == 1 ? "disabled" : "")">
+                    <a class="page-link" href="@Pag(Model.Pagina - 1)">Anterior</a>
+                </li>
+                @for (var p = Math.Max(1, Model.Pagina - 2); p <= Math.Min(Model.TotalPaginas, Model.Pagina + 2); p++)
+                {
+                    <li class="page-item @(p == Model.Pagina ? "active" : "")">
+                        <a class="page-link" href="@Pag(p)">@p</a>
+                    </li>
+                }
+                <li class="page-item @(Model.Pagina == Model.TotalPaginas ? "disabled" : "")">
+                    <a class="page-link" href="@Pag(Model.Pagina + 1)">Siguiente</a>
+                </li>
+            </ul>
+        </nav>
+    }
+}

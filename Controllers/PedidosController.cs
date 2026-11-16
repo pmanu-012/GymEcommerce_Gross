@@ -88,4 +88,13 @@ public class PedidosController : Controller
         TempData["PedidoNuevo"] = true;
         return RedirectToAction(nameof(Detalle), new { id = resultado.IdPedido });
     }
+    public async Task<IActionResult> Comprobante(int id)
+    {
+        var vm = await _pedidos.ObtenerDetalleAsync(id, IdUsuario);
+        if (vm is null)
+            return NotFound();
+
+        Response.Headers.ContentDisposition = $"inline; filename=pedido-{id}.pdf";
+        return File(GeneradorPdf.ComprobantePedido(vm), "application/pdf");
+    }
 }

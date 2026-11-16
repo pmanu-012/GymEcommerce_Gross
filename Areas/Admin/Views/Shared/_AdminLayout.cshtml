@@ -72,6 +72,12 @@
                            </a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link @(seccion == "Auditoria" ? "active" : "")"
+                               asp-area="Admin" asp-controller="Auditoria" asp-action="Index">
+                                <i class="bi bi-journal-text" aria-hidden="true"></i> Auditoría
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link @(seccion == "Categorias" ? "active" : "")"
                                asp-area="Admin" asp-controller="Categorias" asp-action="Index">
                                 <i class="bi bi-tags" aria-hidden="true"></i> Categorías

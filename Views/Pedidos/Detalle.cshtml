@@ -101,6 +101,10 @@ else
             </div>
         </div>
 
+        <a class="btn btn-outline-secondary w-100 mb-2" asp-action="Comprobante" asp-route-id="@Model.IdPedido" target="_blank">
+            <i class="bi bi-file-earmark-pdf" aria-hidden="true"></i> Descargar comprobante
+        </a>
+
         @if (Model.PuedeCancelarCliente)
         {
             <button type="button" class="btn btn-outline-danger w-100 js-cancelar-pedido"

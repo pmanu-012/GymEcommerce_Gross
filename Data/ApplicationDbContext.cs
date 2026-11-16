@@ -5,9 +5,13 @@ using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 
 namespace GymEcommerce.Data;
 
-public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IDataProtectionKeyContext
+public partial class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IDataProtectionKeyContext
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IHttpContextAccessor? http = null)
+        : base(options)
+    {
+        _http = http;
+    }
 
     // El nombre de cada DbSet es el nombre de la tabla en la base.
     public DbSet<Categoria> Categorias { get; set; } = null!;

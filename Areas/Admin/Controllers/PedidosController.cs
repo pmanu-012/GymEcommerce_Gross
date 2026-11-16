@@ -86,4 +86,13 @@ public class PedidosController : Controller
             : $"{resultado.Mensaje} No se pudo enviar el aviso por email.";
         return Json(new { ok = true, mensaje });
     }
+    public async Task<IActionResult> Comprobante(int id)
+    {
+        var vm = await _pedidos.ObtenerDetalleAsync(id);
+        if (vm is null)
+            return NotFound();
+
+        Response.Headers.ContentDisposition = $"inline; filename=pedido-{id}.pdf";
+        return File(GeneradorPdf.ComprobantePedido(vm), "application/pdf");
+    }
 }

@@ -7,8 +7,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Globalization;
 using Microsoft.AspNetCore.DataProtection;
+using QuestPDF.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Licencia gratuita de QuestPDF (individuos, proyectos académicos y empresas chicas)
+QuestPDF.Settings.License = LicenseType.Community;
 
 // --- Base de datos ---
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")

@@ -11,9 +11,14 @@
         <h1 class="h3 mb-0">Pedido #@Model.IdPedido</h1>
         <div class="text-muted small">@Fechas.ALocal(Model.Fecha).ToString("dd/MM/yyyy HH:mm")</div>
     </div>
-    <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
-        <i class="bi bi-arrow-left" aria-hidden="true"></i> Volver al listado
-    </a>
+    <div class="d-flex gap-2">
+        <a asp-action="Comprobante" asp-route-id="@Model.IdPedido" target="_blank" class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-file-earmark-pdf" aria-hidden="true"></i> Comprobante
+        </a>
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left" aria-hidden="true"></i> Volver al listado
+        </a>
+    </div>
 </div>
 
 <div class="card mb-4">
