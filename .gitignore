@@ -364,3 +364,4 @@ FodyWeavers.xsd
 
 # emails-dev
 emails-dev/
+/appsettings.Production.json
