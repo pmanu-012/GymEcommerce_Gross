@@ -457,3 +457,78 @@ h1, h2, h3, h4, h5, h6,
         outline-offset: 2px;
         border-radius: .25rem;
     }
+
+/* ---------- Pulido ---------- */
+.gs-saltar {
+    position: absolute;
+    top: .5rem;
+    left: .5rem;
+    z-index: 2000;
+    padding: .5rem 1rem;
+    background: var(--gs-acento);
+    color: var(--gs-carbon);
+    font-weight: 600;
+    border-radius: var(--bs-border-radius);
+}
+
+/* Foco visible y consistente al navegar con teclado */
+a:focus-visible,
+button:focus-visible,
+.btn:focus-visible {
+    outline: 3px solid rgba(var(--gs-acento-rgb), .6);
+    outline-offset: 2px;
+    box-shadow: none;
+}
+
+/* Errores de jQuery Unobtrusive con el aspecto de Bootstrap */
+.input-validation-error {
+    border-color: var(--bs-danger) !important;
+}
+
+    .input-validation-error:focus {
+        box-shadow: 0 0 0 .2rem rgba(var(--bs-danger-rgb), .25) !important;
+    }
+
+.field-validation-error {
+    display: block;
+    font-size: .875em;
+    margin-top: .25rem;
+}
+
+/* Seguimiento del pedido en celulares chicos */
+@media (max-width: 575.98px) {
+    .gs-pasos li {
+        font-size: .7rem;
+    }
+
+        .gs-pasos li::before {
+            width: 1.6rem;
+            height: 1.6rem;
+        }
+
+        .gs-pasos li + li::after {
+            top: .8rem;
+        }
+}
+
+/* Menos movimiento para quien lo pide en su sistema */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        transition: none !important;
+        animation: none !important;
+        scroll-behavior: auto !important;
+    }
+
+    .producto-card:hover {
+        transform: none;
+    }
+}
+
+/* Páginas de error */
+.gs-error-codigo {
+    font-family: var(--gs-font-display);
+    font-weight: 700;
+    font-size: clamp(5rem, 18vw, 9rem);
+    line-height: 1;
+    color: var(--gs-acento);
+}

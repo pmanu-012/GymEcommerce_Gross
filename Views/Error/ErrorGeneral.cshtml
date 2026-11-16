@@ -1,0 +1,47 @@
+@using GymEcommerce.Models
+@{
+    // Sin layout a propósito: si el error vino de la base de datos, el layout (que consulta el carrito) también fallaría.
+    Layout = null;
+    var codigo = ViewData["Codigo"] as int? ?? 500;
+    var (titulo, texto) = codigo switch
+    {
+        400 => ("No pudimos procesar la solicitud",
+                "Puede que la página haya estado abierta mucho tiempo. Volvé a cargarla e intentá de nuevo."),
+        _ => ("Algo salió mal",
+              "Tuvimos un problema de nuestro lado. Probá de nuevo en unos minutos.")
+    };
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>@titulo - @Marca.Nombre</title>
+    <link rel="icon" href="~/favicon.svg" type="image/svg+xml" />
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <header>
+        <nav class="navbar gs-navbar" data-bs-theme="dark">
+            <div class="container">
+                <a class="navbar-brand gs-marca" href="@Url.Content("~/")">
+                    <i class="bi bi-lightning-charge-fill" aria-hidden="true"></i>@Marca.Nombre
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container flex-grow-1 d-flex align-items-center justify-content-center text-center py-5">
+        <div>
+            <div class="gs-error-codigo" aria-hidden="true">@codigo</div>
+            <h1 class="h3 mt-2">@titulo</h1>
+            <p class="text-muted">@texto</p>
+            <a class="btn btn-primary mt-2" href="@Url.Content("~/")">Volver al inicio</a>
+        </div>
+    </main>
+</body>
+</html>
