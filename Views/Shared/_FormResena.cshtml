@@ -1,0 +1,30 @@
+@model GymEcommerce.ViewModels.ResenaFormViewModel
+
+<form class="js-form-resena mt-3" asp-area="" asp-controller="Resenas" asp-action="Guardar" method="post" novalidate>
+    <input type="hidden" asp-for="IdProducto" />
+
+    <div class="mb-2">
+        <div class="form-label mb-1" id="etiquetaCalificacion">Tu calificación</div>
+        @* Las estrellas son radio buttons: van de 5 a 1 y el CSS las da vuelta, así se pintan "hasta" la elegida *@
+        <div class="gs-selector-estrellas" role="radiogroup" aria-labelledby="etiquetaCalificacion">
+            @for (var n = 5; n >= 1; n--)
+            {
+                var texto = n == 1 ? "1 estrella" : $"{n} estrellas";
+                <input type="radio" asp-for="Calificacion" value="@n" id="calificacion-@n" />
+                <label for="calificacion-@n" title="@texto">
+                    <i class="bi bi-star-fill" aria-hidden="true"></i><span class="visually-hidden">@texto</span>
+                </label>
+            }
+        </div>
+        <span asp-validation-for="Calificacion" class="text-danger small d-block"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Comentario" class="form-label"></label>
+        <textarea asp-for="Comentario" class="form-control" rows="3" maxlength="1000"
+                  placeholder="¿Qué te pareció? Contá tu experiencia."></textarea>
+        <span asp-validation-for="Comentario" class="text-danger small"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">@(Model.EsEdicion ? "Guardar cambios" : "Publicar opinión")</button>
+</form>

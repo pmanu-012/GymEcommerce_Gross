@@ -1,0 +1,27 @@
+@model GymEcommerce.ViewModels.UltimasOpinionesViewModel
+
+<section class="mt-5" aria-labelledby="tituloOpiniones">
+    <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
+        <div>
+            <h2 id="tituloOpiniones" class="gs-seccion-titulo h3 mb-1">Lo que dicen nuestros clientes</h2>
+            <div class="small">
+                <partial name="_Estrellas" model="Model.Resumen.Promedio" />
+                <span class="text-muted">@Model.Resumen.Promedio.ToString("0.0") · @Model.Resumen.Cantidad @(Model.Resumen.Cantidad == 1 ? "opinión" : "opiniones")</span>
+            </div>
+        </div>
+        <a asp-controller="Resenas" asp-action="Index">Ver todas</a>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var item in Model.Items)
+        {
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <partial name="_ResenaItem" model="item" />
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>

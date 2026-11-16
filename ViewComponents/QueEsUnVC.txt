@@ -1,3 +1,20 @@
-Un ViewComponent (componente de vista) es un objeto o bloque de código autónomo que encapsula 
-tanto la lógica (en Ruby, C#, etc.) como la plantilla HTML para generar elementos 
-de interfaz de usuario reutilizables
+Un ViewComponent encapsula la lógica necesaria para construir una parte reutilizable de la interfaz.
+Puede consultar clases de servicio, obtener sus propios datos y devolver una vista parcial, 
+evitando repetir esa lógica en distintos controladores o páginas.
+
+EXplicación de claude: ViewComponent. Es una parte de una página que busca sus propios datos. 
+Conviene compararlo con las otras dos piezas que ya usamos:
+					Busca datos								 Se llama desde							 Ejemplo en el proyecto
+Vista parcial	No: muestra lo que le pasan						Una vista						_ProductoCard, _Estrellas
+ViewComponent	Sí: tiene una clase C# que consulta servicios	Una vista (o un controlador)	Contador del carrito, sección de reseñas
+Controlador		Sí												Una URL							CatalogoController
+
+El caso más claro es el contador del carrito. Está en _Layout, que aparece en todas las páginas,
+pero el layout no tiene controlador. Sin un ViewComponent, cada controlador del sitio 
+(catálogo, perfil, pedidos...) tendría que cargar la cantidad del carrito y pasarla a la vista.
+Con el ViewComponent, el layout dice “dibujá el contador acá”, y el componente consulta solo la cantidad.
+
+Con las reseñas pasa lo mismo: CatalogoController.Detalle no sabe nada de reseñas, y la vista le pide
+al componente que dibuje esa sección. La ventaja extra es que un controlador también puede devolver 
+un ViewComponent solo. Eso hace ResenasController.Seccion: después de publicar, el JavaScript pide
+la sección actualizada y el servidor la dibuja con exactamente el mismo código.

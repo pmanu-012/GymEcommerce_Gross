@@ -1,0 +1,12 @@
+@model GymEcommerce.ViewModels.ResenaItemViewModel
+@using GymEcommerce.Services
+
+<div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+    <partial name="_Estrellas" model="(decimal)Model.Calificacion" />
+    <span class="fw-medium">@Model.Autor</span>
+    <span class="text-muted small">· @Fechas.ALocal(Model.Fecha).ToString("dd/MM/yyyy")</span>
+</div>
+@if (!string.IsNullOrWhiteSpace(Model.Comentario))
+{
+    <p class="mb-0 gs-resena-comentario">@Model.Comentario</p>
+}

@@ -1,0 +1,12 @@
+@model decimal
+@{
+    // Muestra de 0 a 5 estrellas, con media estrella cuando corresponde (ej.: 4,5)
+    var valor = Math.Clamp(Model, 0m, 5m);
+}
+<span class="gs-estrellas" role="img" aria-label="@($"{valor:0.#} de 5 estrellas")">
+    @for (var i = 1; i <= 5; i++)
+    {
+        var icono = valor >= i ? "bi-star-fill" : valor >= i - 0.5m ? "bi-star-half" : "bi-star";
+        <i class="bi @icono" aria-hidden="true"></i>
+    }
+</span>

@@ -11,6 +11,7 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
                 <li><span class="dropdown-item-text small text-muted">@User.Identity?.Name</span></li>
+                <li><a class="dropdown-item" asp-area="" asp-controller="Perfil" asp-action="Index"><i class="bi bi-person" aria-hidden="true"></i> Mi perfil</a></li>
                 @if (User.IsInRole(Roles.Cliente))
                 {
                   <li><a class="dropdown-item" asp-area="" asp-controller="Pedidos" asp-action="Index"><i class="bi bi-bag" aria-hidden="true"></i> Mis pedidos</a></li>

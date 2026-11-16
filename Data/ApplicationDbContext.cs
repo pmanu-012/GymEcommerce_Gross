@@ -1,10 +1,11 @@
 using GymEcommerce.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 
 namespace GymEcommerce.Data;
 
-public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IDataProtectionKeyContext
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
@@ -24,6 +25,9 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Auditoria> Auditorias { get; set; } = null!;
     public DbSet<IngresoMercaderia> IngresosMercaderia { get; set; } = null!;
     public DbSet<DetalleIngreso> DetallesIngreso { get; set; } = null!;
+
+    // Tabla técnica de ASP.NET (claves de Data Protection); no forma parte del DER
+    public DbSet<DataProtectionKey> DataProtectionKeys { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder b)
     {
@@ -121,6 +125,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
         b.Entity<ResenaPlataforma>(e =>
         {
+            e.HasIndex(r => r.IdUsuario).IsUnique(); // una opinión por cliente (se puede editar)
             e.ToTable(t => t.HasCheckConstraint("CK_ResenasPlataforma_Calificacion", "[Calificacion] BETWEEN 1 AND 5"));
 
             e.HasOne(r => r.Usuario).WithMany(u => u.ResenasPlataforma)

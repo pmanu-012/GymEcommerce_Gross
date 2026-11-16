@@ -10,6 +10,14 @@
         <form asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
+            @if (ViewData["EmailSinConfirmar"] is string pendiente)
+            {
+                <div class="alert alert-warning small">
+                    ¿No te llegó?
+                    <a asp-action="ReenviarConfirmacion" asp-route-email="@pendiente">Reenviar el email de confirmación</a>
+                </div>
+            }
+
             <div class="mb-3">
                 <label asp-for="Email" class="form-label"></label>
                 <input asp-for="Email" class="form-control" type="email" autocomplete="username" />
@@ -17,7 +25,10 @@
             </div>
 
             <div class="mb-3">
-                <label asp-for="Password" class="form-label"></label>
+                <div class="d-flex justify-content-between align-items-baseline">
+                    <label asp-for="Password" class="form-label"></label>
+                    <a asp-action="OlvideContrasena" class="small">¿Olvidaste tu contraseña?</a>
+                </div>
                 <input asp-for="Password" class="form-control" autocomplete="current-password" />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>

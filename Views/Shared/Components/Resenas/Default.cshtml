@@ -1,0 +1,129 @@
+@model GymEcommerce.ViewModels.SeccionResenasViewModel
+@{
+    var esProducto = Model.IdProducto.HasValue;
+    var tipo = esProducto ? "producto" : "plataforma";
+    var r = Model.Resumen;
+
+    // A dónde volver después de iniciar sesión (la página que contiene la sección, no el pedido AJAX)
+    var urlRetorno = (esProducto
+        ? Url.Action("Detalle", "Catalogo", new { area = "", id = Model.IdProducto })
+        : Url.Action("Index", "Resenas", new { area = "" })) + "#resenas";
+
+    string UrlPagina(int pagina) => Url.Action("Seccion", "Resenas", new { area = "", idProducto = Model.IdProducto, pagina })!;
+}
+
+<section id="resenas" class="js-resenas mt-5" aria-labelledby="resenasTitulo"
+         data-url-recargar="@Url.Action("Seccion", "Resenas", new { area = "", idProducto = Model.IdProducto })">
+
+    <h2 id="resenasTitulo" class="h4 gs-seccion-titulo">@(esProducto ? "Opiniones del producto" : "Opiniones de nuestros clientes")</h2>
+
+    <div class="row g-4">
+        <!-- Resumen y botón para opinar -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    @if (r.Cantidad == 0)
+                    {
+                        <p class="mb-0 text-muted">Todavía no hay opiniones.</p>
+                    }
+                    else
+                    {
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <span class="gs-promedio">@r.Promedio.ToString("0.0")</span>
+                            <div>
+                                <partial name="_Estrellas" model="r.Promedio" />
+                                <div class="small text-muted">@r.Cantidad @(r.Cantidad == 1 ? "opinión" : "opiniones")</div>
+                            </div>
+                        </div>
+
+                        @for (var n = 5; n >= 1; n--)
+                        {
+                            var cantidad = r.Distribucion[n - 1];
+                            var porcentaje = cantidad * 100 / r.Cantidad;
+                            <div class="d-flex align-items-center gap-2 small mb-1">
+                                <span class="text-nowrap" style="width:2.5rem">@n <i class="bi bi-star-fill gs-estrellas" aria-hidden="true"></i></span>
+                                <div class="progress flex-grow-1" style="height:.5rem" role="progressbar"
+                                     aria-label="@n estrellas" aria-valuenow="@porcentaje" aria-valuemin="0" aria-valuemax="100">
+                                    <div class="progress-bar gs-barra-resena" style="width:@porcentaje%"></div>
+                                </div>
+                                <span class="text-muted text-end" style="width:2rem">@cantidad</span>
+                            </div>
+                        }
+                    }
+
+                    <hr />
+
+                    @if (!Model.Autenticado)
+                    {
+                        <p class="small mb-2">@(esProducto ? "¿Ya lo compraste?" : "¿Compraste en la tienda?") Contanos qué te pareció.</p>
+                        <a class="btn btn-outline-primary btn-sm" asp-area="" asp-controller="Account" asp-action="Login" asp-route-returnUrl="@urlRetorno">
+                            Iniciá sesión para opinar
+                        </a>
+                    }
+                    else if (Model.EsCliente && !Model.PuedeResenar)
+                    {
+                        <p class="small text-muted mb-0">
+                            <i class="bi bi-info-circle" aria-hidden="true"></i>
+                            Vas a poder opinar cuando recibas este producto.
+                        </p>
+                    }
+                    else if (Model.PuedeResenar)
+                    {
+                        <button class="btn btn-primary btn-sm" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#formResena-@tipo" aria-expanded="false" aria-controls="formResena-@tipo">
+                            @(Model.MiResena is null ? "Escribir una opinión" : "Editar mi opinión")
+                        </button>
+                        <div class="collapse" id="formResena-@tipo">
+                            <partial name="_FormResena" model="Model.Form" />
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Listado -->
+        <div class="col-lg-8">
+            @if (Model.MiResena is not null)
+            {
+                <div class="card border-primary mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start gap-2">
+                            <span class="badge text-bg-dark mb-2">Tu opinión</span>
+                            <button type="button" class="btn btn-sm btn-link text-danger p-0 js-eliminar-resena"
+                                    data-url="@Url.Action("Eliminar", "Resenas", new { area = "", idResena = Model.MiResena.IdResena, tipo })">
+                                <i class="bi bi-trash" aria-hidden="true"></i> Eliminar
+                            </button>
+                        </div>
+                        <partial name="_ResenaItem" model="Model.MiResena" />
+                    </div>
+                </div>
+            }
+
+            @if (Model.Resenas.Count == 0 && Model.MiResena is null)
+            {
+                <p class="text-muted">@(esProducto ? "Sé el primero en opinar sobre este producto." : "Sé el primero en opinar sobre la tienda.")</p>
+            }
+
+            @foreach (var resena in Model.Resenas)
+            {
+                <article class="border-bottom py-3">
+                    <partial name="_ResenaItem" model="resena" />
+                </article>
+            }
+
+            @if (Model.TotalPaginas > 1)
+            {
+                <nav aria-label="Páginas de opiniones" class="mt-3">
+                    <ul class="pagination pagination-sm">
+                        @for (var p = 1; p <= Model.TotalPaginas; p++)
+                        {
+                            <li class="page-item @(p == Model.Pagina ? "active" : "")">
+                                <a class="page-link js-pagina-resenas" href="@UrlPagina(p)">@p</a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            }
+        </div>
+    </div>
+</section>

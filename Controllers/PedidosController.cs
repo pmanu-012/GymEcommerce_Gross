@@ -13,12 +13,14 @@ public class PedidosController : Controller
 {
     private readonly PedidoService _pedidos;
     private readonly CarritoService _carrito;
+    private readonly NotificacionService _notificaciones;
     private readonly UserManager<ApplicationUser> _userManager;
 
-    public PedidosController(PedidoService pedidos, CarritoService carrito, UserManager<ApplicationUser> userManager)
+    public PedidosController(PedidoService pedidos, CarritoService carrito, NotificacionService notificaciones, UserManager<ApplicationUser> userManager)
     {
         _pedidos = pedidos;
         _carrito = carrito;
+        _notificaciones = notificaciones;
         _userManager = userManager;
     }
 
@@ -79,6 +81,9 @@ public class PedidosController : Controller
             TempData["Error"] = resultado.Mensaje;
             return RedirectToAction("Index", "Carrito");
         }
+
+        var url = Url.Action(nameof(Detalle), "Pedidos", new { id = resultado.IdPedido }, Request.Scheme)!;
+        await _notificaciones.PedidoRecibidoAsync(resultado.IdPedido!.Value, url);
 
         TempData["PedidoNuevo"] = true;
         return RedirectToAction(nameof(Detalle), new { id = resultado.IdPedido });

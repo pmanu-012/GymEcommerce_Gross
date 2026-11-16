@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Globalization;
+using Microsoft.AspNetCore.DataProtection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +22,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
     {
         options.User.RequireUniqueEmail = true;
         options.SignIn.RequireConfirmedAccount = false;
+        options.SignIn.RequireConfirmedEmail = true;
         options.Password.RequiredLength = 8;
         options.Password.RequireNonAlphanumeric = false;
     })
@@ -56,6 +58,16 @@ builder.Services.AddScoped<ImagenService>();
 builder.Services.AddScoped<CarritoService>();
 builder.Services.AddScoped<PedidoService>();
 builder.Services.AddScoped<IngresoService>();
+builder.Services.Configure<OpcionesEmail>(builder.Configuration.GetSection("Email"));
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<NotificacionService>();
+builder.Services.AddScoped<ResenaService>();
+
+// Las claves que firman las cookies y los enlaces de los emails se guardan en la base:
+// así siguen valiendo aunque el servidor se reinicie o se vuelva a publicar
+builder.Services.AddDataProtection()
+    .SetApplicationName("GymEcommerce")
+    .PersistKeysToDbContext<ApplicationDbContext>();
 builder.Services.Configure<OpcionesTienda>(builder.Configuration.GetSection("Tienda"));
 
 builder.Services.AddControllersWithViews(options =>

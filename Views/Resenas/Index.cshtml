@@ -1,0 +1,15 @@
+@using GymEcommerce.Models
+@{
+    ViewData["Title"] = "Opiniones";
+    var pagina = ViewData["Pagina"] as int? ?? 1;
+}
+
+<h1 class="h3 mb-1">Opiniones sobre @Marca.Nombre</h1>
+<p class="text-muted">Lo que cuentan quienes ya compraron en la tienda.</p>
+
+@await Component.InvokeAsync("Resenas", new { idProducto = (int?)null, pagina })
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/resenas.js" asp-append-version="true"></script>
+}

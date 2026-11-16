@@ -1,0 +1,41 @@
+@model EmailPruebaViewModel
+@{
+    ViewData["Title"] = "Email de prueba";
+}
+
+<h1 class="h3 mb-3">Email de prueba</h1>
+
+<div class="row">
+    <div class="col-lg-7">
+        @if (!Model.Configurado)
+        {
+            <div class="alert alert-warning">
+                El SMTP no está configurado (faltan <code>Email:Usuario</code> o <code>Email:Contrasena</code>).
+                Los emails se guardan como archivos en la carpeta <code>emails-dev</code> del proyecto.
+            </div>
+        }
+
+        @if (Model.Resultado is not null)
+        {
+            <div class="alert @(Model.Ok == true ? "alert-success" : "alert-danger")" role="status">@Model.Resultado</div>
+        }
+
+        <div class="card">
+            <div class="card-body">
+                <p class="text-muted">Envía un email de prueba para comprobar que el servidor puede conectarse al SMTP.</p>
+                <form asp-action="Index" method="post">
+                    <div class="mb-3">
+                        <label asp-for="Destinatario" class="form-label"></label>
+                        <input asp-for="Destinatario" class="form-control" type="email" />
+                        <span asp-validation-for="Destinatario" class="text-danger"></span>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Enviar prueba</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

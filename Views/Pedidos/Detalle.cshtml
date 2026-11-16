@@ -63,6 +63,12 @@ else
                             <a asp-controller="Catalogo" asp-action="Detalle" asp-route-id="@item.IdProducto"
                                class="fw-medium text-dark text-decoration-none">@item.Nombre</a>
                             <div class="small text-muted">@item.Cantidad × @item.PrecioUnitario.ToString("C")</div>
+                            @if (Model.Estado == EstadoPedido.Entregado)
+                            {
+                                <a asp-controller="Catalogo" asp-action="Detalle" asp-route-id="@item.IdProducto" asp-fragment="resenas" class="small">
+                                    <i class="bi bi-star" aria-hidden="true"></i> Opinar sobre este producto
+                                </a>
+                            }
                         </div>
                         <div class="fw-semibold text-nowrap">@item.Subtotal.ToString("C")</div>
                     </li>

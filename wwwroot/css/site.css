@@ -398,3 +398,62 @@ h1, h2, h3, h4, h5, h6,
     color: var(--gs-carbon) !important;
     font-weight: 600;
 }
+
+/* ---------- Reseñas ---------- */
+.gs-estrellas {
+    color: var(--gs-acento);
+    white-space: nowrap;
+}
+
+    .gs-estrellas .bi-star {
+        color: #D1D5DB;
+    }
+
+.gs-promedio {
+    font-family: var(--gs-font-display);
+    font-weight: 700;
+    font-size: 3rem;
+    line-height: 1;
+}
+
+.gs-barra-resena {
+    background-color: var(--gs-acento);
+}
+
+.gs-resena-comentario {
+    white-space: pre-line;
+}
+
+/* Selector de estrellas: radios ocultos (pero accesibles con teclado) y etiquetas en orden invertido */
+.gs-selector-estrellas {
+    display: inline-flex;
+    flex-direction: row-reverse;
+    gap: .15rem;
+}
+
+    .gs-selector-estrellas input {
+        position: absolute;
+        opacity: 0;
+        width: 1px;
+        height: 1px;
+    }
+
+    .gs-selector-estrellas label {
+        font-size: 1.9rem;
+        line-height: 1;
+        color: #D1D5DB;
+        cursor: pointer;
+        transition: color .1s;
+    }
+
+        .gs-selector-estrellas input:checked ~ label,
+        .gs-selector-estrellas label:hover,
+        .gs-selector-estrellas label:hover ~ label {
+            color: var(--gs-acento);
+        }
+
+    .gs-selector-estrellas input:focus-visible + label {
+        outline: 2px solid var(--gs-carbon);
+        outline-offset: 2px;
+        border-radius: .25rem;
+    }

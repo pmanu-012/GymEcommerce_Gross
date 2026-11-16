@@ -124,4 +124,9 @@
     </div>
 </div>
 
-@* Hito de reseñas: acá va la lista de reseñas del producto. *@
+@await Component.InvokeAsync("Resenas", new { idProducto = (int?)Model.IdProducto })
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/resenas.js" asp-append-version="true"></script>
+}

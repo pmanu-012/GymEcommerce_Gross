@@ -19,6 +19,13 @@
         <h2 class="h6 card-title mb-2">
             <a asp-controller="Catalogo" asp-action="Detalle" asp-route-id="@Model.IdProducto">@Model.Nombre</a>
         </h2>
+        @if (Model.CantidadResenas > 0)
+        {
+            <div class="small mb-2">
+                <partial name="_Estrellas" model="Model.Promedio" />
+                <span class="text-muted">(@Model.CantidadResenas)</span>
+           </div>
+        }
         <div class="mt-auto">
             @if (Model.EnOferta)
             {

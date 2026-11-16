@@ -16,11 +16,13 @@ public class PedidosController : Controller
 
     private readonly ApplicationDbContext _db;
     private readonly PedidoService _pedidos;
+    private readonly NotificacionService _notificaciones;
 
-    public PedidosController(ApplicationDbContext db, PedidoService pedidos)
+    public PedidosController(ApplicationDbContext db, PedidoService pedidos, NotificacionService notificaciones)
     {
         _db = db;
         _pedidos = pedidos;
+        _notificaciones = notificaciones;
     }
 
     public async Task<IActionResult> Index(PedidoListadoAdminViewModel vm)
@@ -74,6 +76,14 @@ public class PedidosController : Controller
     public async Task<IActionResult> CambiarEstado(int id, EstadoPedido estado)
     {
         var resultado = await _pedidos.CambiarEstadoAsync(id, estado);
-        return Json(new { ok = resultado.Ok, mensaje = resultado.Mensaje });
+        if (!resultado.Ok)
+            return Json(new { ok = false, mensaje = resultado.Mensaje });
+        
+        var url = Url.Action("Detalle", "Pedidos", new { area = "", id }, Request.Scheme)!;
+        var avisado = await _notificaciones.CambioEstadoAsync(id, url);
+        var mensaje = avisado
+            ? $"{resultado.Mensaje} Se avisó al cliente por email."
+            : $"{resultado.Mensaje} No se pudo enviar el aviso por email.";
+        return Json(new { ok = true, mensaje });
     }
 }

@@ -13,6 +13,10 @@ public class ProductoCardViewModel
     public bool EnOferta { get; set; }
     public int Stock { get; set; }
 
+    // Se completan aparte (CatalogoService), no salen de la entidad
+    public decimal Promedio { get; set; }
+    public int CantidadResenas { get; set; }
+
     public static ProductoCardViewModel Desde(Producto p) => new()
     {
         IdProducto = p.IdProducto,

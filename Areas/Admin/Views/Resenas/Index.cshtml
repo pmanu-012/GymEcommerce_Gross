@@ -1,0 +1,127 @@
+@model ResenasAdminViewModel
+@using GymEcommerce.Services
+@{
+    ViewData["Title"] = "Reseñas";
+    var esProducto = Model.Tipo == "producto";
+
+    string Pag(int pagina) => Url.Action("Index", new { tipo = Model.Tipo, calificacion = Model.Calificacion, pagina })!;
+}
+
+@Html.AntiForgeryToken()
+
+<h1 class="h3 mb-3">Reseñas</h1>
+
+<ul class="nav nav-tabs mb-3">
+    <li class="nav-item">
+        <a class="nav-link @(esProducto ? "active" : "")" asp-action="Index" asp-route-tipo="producto"
+           aria-current="@(esProducto ? "page" : null)">De productos</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(!esProducto ? "active" : "")" asp-action="Index" asp-route-tipo="plataforma"
+           aria-current="@(!esProducto ? "page" : null)">De la tienda</a>
+    </li>
+</ul>
+
+<form method="get" class="row g-2 mb-3">
+    <input type="hidden" asp-for="Tipo" />
+    <div class="col-md-4">
+        <select asp-for="Calificacion" class="form-select" aria-label="Calificación">
+            <option value="">Todas las calificaciones</option>
+            @for (var n = 5; n >= 1; n--)
+            {
+                <option value="@n">@n @(n == 1 ? "estrella" : "estrellas")</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-2 d-grid">
+        <button type="submit" class="btn btn-outline-primary">Filtrar</button>
+    </div>
+</form>
+
+<p class="text-muted small">@Model.Total @(Model.Total == 1 ? "reseña" : "reseñas")</p>
+
+@if (Model.Resenas.Count == 0)
+{
+    <div class="alert alert-info">No hay reseñas con esos filtros.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table align-middle tabla-admin bg-white">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Cliente</th>
+                    @if (esProducto)
+                    {
+                        <th>Producto</th>
+                    }
+                    <th>Calificación</th>
+                    <th>Comentario</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var r in Model.Resenas)
+                {
+                    <tr>
+                        <td class="text-nowrap">@Fechas.ALocal(r.Fecha).ToString("dd/MM/yyyy")</td>
+                        <td>
+                            <div>@r.Autor</div>
+                            <div class="small text-muted">@r.Email</div>
+                        </td>
+                        @if (esProducto)
+                        {
+                            <td>
+                                <a asp-area="" asp-controller="Catalogo" asp-action="Detalle" asp-route-id="@r.IdProducto"
+                                   asp-fragment="resenas" target="_blank">@r.Producto</a>
+                            </td>
+                        }
+                        <td class="text-nowrap"><partial name="_Estrellas" model="(decimal)r.Calificacion" /></td>
+                        <td class="small" style="max-width:360px">
+                            @if (string.IsNullOrWhiteSpace(r.Comentario))
+                            {
+                                <span class="text-muted">Sin comentario</span>
+                            }
+                            else
+                            {
+                                <span class="gs-resena-comentario">@r.Comentario</span>
+                            }
+                        </td>
+                        <td class="text-end">
+                            <button type="button" class="btn btn-sm btn-outline-danger js-eliminar-resena-admin"
+                                    data-url="@Url.Action("Eliminar", new { tipo = Model.Tipo, id = r.IdResena })"
+                                    data-autor="@r.Autor" title="Eliminar" aria-label="Eliminar la reseña de @r.Autor">
+                                <i class="bi bi-trash" aria-hidden="true"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (Model.TotalPaginas > 1)
+    {
+        <nav aria-label="Paginación">
+            <ul class="pagination justify-content-center">
+                <li class="page-item @(Model.Pagina == 1 ? "disabled" : "")">
+                    <a class="page-link" href="@Pag(Model.Pagina - 1)">Anterior</a>
+                </li>
+                @for (var p = Math.Max(1, Model.Pagina - 2); p <= Math.Min(Model.TotalPaginas, Model.Pagina + 2); p++)
+                {
+                    <li class="page-item @(p == Model.Pagina ? "active" : "")">
+                        <a class="page-link" href="@Pag(p)">@p</a>
+                    </li>
+                }
+                <li class="page-item @(Model.Pagina == Model.TotalPaginas ? "disabled" : "")">
+                    <a class="page-link" href="@Pag(Model.Pagina + 1)">Siguiente</a>
+                </li>
+            </ul>
+        </nav>
+    }
+}
+
+@section Scripts {
+    <script src="~/js/admin-resenas.js" asp-append-version="true"></script>
+}

@@ -1,0 +1,71 @@
+@model GymEcommerce.ViewModels.PerfilPaginaViewModel
+@{
+    ViewData["Title"] = "Mi perfil";
+}
+
+<h1 class="h3 mb-4">Mi perfil</h1>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header fw-medium">Mis datos</div>
+            <div class="card-body">
+                <form asp-action="Datos" method="post">
+                    <div class="mb-3">
+                        <label class="form-label" for="emailSoloLectura">Email</label>
+                        <input id="emailSoloLectura" class="form-control" value="@Model.Email" readonly />
+                        <div class="form-text">El email no se puede cambiar.</div>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-sm-6">
+                            <label asp-for="Datos.Nombre" class="form-label"></label>
+                            <input asp-for="Datos.Nombre" class="form-control" autocomplete="given-name" />
+                            <span asp-validation-for="Datos.Nombre" class="text-danger"></span>
+                        </div>
+                        <div class="col-sm-6">
+                            <label asp-for="Datos.Apellido" class="form-label"></label>
+                            <input asp-for="Datos.Apellido" class="form-control" autocomplete="family-name" />
+                            <span asp-validation-for="Datos.Apellido" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Datos.Telefono" class="form-label"></label>
+                        <input asp-for="Datos.Telefono" class="form-control" type="tel" autocomplete="tel" />
+                        <span asp-validation-for="Datos.Telefono" class="text-danger"></span>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Guardar datos</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header fw-medium">Cambiar contraseña</div>
+            <div class="card-body">
+                <form asp-action="CambiarContrasena" method="post">
+                    <div class="mb-3">
+                        <label asp-for="Contrasena.PasswordActual" class="form-label"></label>
+                        <input asp-for="Contrasena.PasswordActual" class="form-control" autocomplete="current-password" />
+                        <span asp-validation-for="Contrasena.PasswordActual" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Contrasena.PasswordNueva" class="form-label"></label>
+                        <input asp-for="Contrasena.PasswordNueva" class="form-control" autocomplete="new-password" />
+                        <span asp-validation-for="Contrasena.PasswordNueva" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Contrasena.ConfirmarPassword" class="form-label"></label>
+                        <input asp-for="Contrasena.ConfirmarPassword" class="form-control" autocomplete="new-password" />
+                        <span asp-validation-for="Contrasena.ConfirmarPassword" class="text-danger"></span>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Cambiar contraseña</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

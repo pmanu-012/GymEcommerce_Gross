@@ -57,6 +57,9 @@ public class CatalogoService
             .Take(TamanoPagina)
             .ToListAsync();
 
+        var tarjetas = productos.Select(ProductoCardViewModel.Desde).ToList();
+        await CompletarCalificacionesAsync(tarjetas);
+
         var categorias = await _db.Categorias.AsNoTracking()
             .OrderBy(c => c.Nombre)
             .Select(c => new CategoriaMenuItem
@@ -74,7 +77,7 @@ public class CatalogoService
         {
             Accion = accion,
             Filtro = filtro,
-            Productos = productos.Select(ProductoCardViewModel.Desde).ToList(),
+            Productos = tarjetas,
             Categorias = categorias,
             TotalProductos = total,
             PaginaActual = pagina,
@@ -138,10 +141,32 @@ public class CatalogoService
             .Take(4)
             .ToListAsync();
 
+        var tarjetas = ofertas.Select(ProductoCardViewModel.Desde).ToList();
+        await CompletarCalificacionesAsync(tarjetas);
+
         return new PortadaViewModel
         {
             Categorias = categorias,
-            Ofertas = ofertas.Select(ProductoCardViewModel.Desde).ToList()
+            Ofertas = tarjetas
         };
+    }
+    // Promedio y cantidad de reseñas de las tarjetas que se van a mostrar, en una sola consulta
+    private async Task CompletarCalificacionesAsync(List<ProductoCardViewModel> tarjetas)
+    {
+        var ids = tarjetas.Select(t => t.IdProducto).ToList();
+        var datos = await _db.ResenasProducto
+            .Where(r => ids.Contains(r.IdProducto))
+            .GroupBy(r => r.IdProducto)
+            .Select(g => new { IdProducto = g.Key, Promedio = g.Average(r => (double)r.Calificacion), Cantidad = g.Count() })
+            .ToDictionaryAsync(x => x.IdProducto);
+
+        foreach (var t in tarjetas)
+        {
+            if (datos.TryGetValue(t.IdProducto, out var d))
+            {
+                t.Promedio = Math.Round((decimal)d.Promedio, 1);
+                t.CantidadResenas = d.Cantidad;
+            }
+        }
     }
 }

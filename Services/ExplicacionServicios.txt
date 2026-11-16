@@ -1,0 +1,9 @@
+Servicios. Están en el medio, pero entre los controladores y la base de datos, 
+no entre las vistas y los controladores. El reparto es así:
+
+Controlador: todo lo que es HTTP. Recibe la petición, revisa ModelState, decide si responde
+con una vista, una redirección o JSON, y usa TempData o Request.
+
+Servicio: las reglas del negocio y el acceso a datos, sin nada de HTTP.
+La lógica de negocio es el conjunto de reglas, procedimientos y decisiones del mundo real 
+que determinan cómo una aplicación crea, almacena, calcula y modifica la información
