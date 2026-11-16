@@ -1,13 +1,18 @@
 using GymEcommerce.Models;
+using GymEcommerce.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GymEcommerce.Areas.Admin.Controllers;
 
+// Página de inicio del panel: indicadores y estadísticas
 [Area("Admin")]
 [Authorize(Roles = Roles.Administrador)]
 public class HomeController : Controller
 {
-    // Por ahora el panel arranca en Productos. Cuando hagamos las estadísticas, esta será su página.
-    public IActionResult Index() => RedirectToAction("Index", "Productos");
+    private readonly EstadisticasService _estadisticas;
+
+    public HomeController(EstadisticasService estadisticas) => _estadisticas = estadisticas;
+
+    public async Task<IActionResult> Index(int dias = 30) => View(await _estadisticas.ObtenerAsync(dias));
 }

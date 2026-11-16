@@ -66,6 +66,11 @@ builder.Services.Configure<OpcionesEmail>(builder.Configuration.GetSection("Emai
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<NotificacionService>();
 builder.Services.AddScoped<ResenaService>();
+builder.Services.AddScoped<EstadisticasService>();
+
+// Cada cuánto se revisa que la sesión siga siendo válida (por defecto, 30 minutos).
+// Con 1 minuto, un cliente dado de baja pierde la sesión casi enseguida.
+builder.Services.Configure<SecurityStampValidatorOptions>(o => o.ValidationInterval = TimeSpan.FromMinutes(1));
 
 // Las claves que firman las cookies y los enlaces de los emails se guardan en la base:
 // así siguen valiendo aunque el servidor se reinicie o se vuelva a publicar

@@ -1,0 +1,261 @@
+@model EstadisticasViewModel
+@using GymEcommerce.Services
+@{
+    ViewData["Title"] = "Resumen";
+    var maxProducto = Model.TopProductos.Count == 0 ? 1 : Model.TopProductos.Max(p => p.Unidades);
+    var maxCategoria = Model.VentasPorCategoria.Count == 0 ? 1m : Model.VentasPorCategoria.Max(c => c.Ingresos);
+    var periodoTexto = EstadisticasViewModel.Periodos.First(p => p.Dias == Model.Dias).Texto;
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <div>
+        <h1 class="h3 mb-0">Resumen</h1>
+        <div class="small text-muted">Desde el @Model.DesdeLocal.ToString("dd/MM/yyyy") hasta hoy · sin pedidos cancelados</div>
+    </div>
+    <form method="get" class="d-flex align-items-center gap-2">
+        <label for="dias" class="small text-muted text-nowrap">Período</label>
+        <select id="dias" name="dias" class="form-select form-select-sm" onchange="this.form.submit()">
+            @foreach (var p in EstadisticasViewModel.Periodos)
+            {
+                <option value="@p.Dias" selected="@(p.Dias == Model.Dias)">@p.Texto</option>
+            }
+        </select>
+        <noscript><button type="submit" class="btn btn-sm btn-outline-primary">Ver</button></noscript>
+    </form>
+</div>
+
+@if (Model.PendientesTotal > 0)
+{
+    <div class="alert alert-warning d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <span>
+            <i class="bi bi-hourglass-split" aria-hidden="true"></i>
+            Hay <strong>@Model.PendientesTotal @(Model.PendientesTotal == 1 ? "pedido pendiente" : "pedidos pendientes")</strong> de confirmar.
+        </span>
+        <a class="btn btn-sm btn-outline-dark" asp-controller="Pedidos" asp-action="Index" asp-route-estado="Pendiente">Ver pendientes</a>
+    </div>
+}
+
+<!-- Indicadores -->
+<div class="row row-cols-2 row-cols-lg-4 g-3 mb-4">
+    <div class="col">
+        <div class="card h-100 admin-kpi">
+            <div class="card-body">
+                <div class="small text-muted">Ventas</div>
+                <div class="admin-kpi-valor">@Model.Ventas.ToString("C0")</div>
+                @if (Model.VariacionVentas is decimal variacion)
+                {
+                    var sube = variacion >= 0;
+                    <div class="small @(sube ? "text-success" : "text-danger")">
+                        <i class="bi @(sube ? "bi-arrow-up-right" : "bi-arrow-down-right")" aria-hidden="true"></i>
+                        @(sube ? "+" : "")@variacion.ToString("0.#")% vs. período anterior
+                    </div>
+                }
+                else
+                {
+                    <div class="small text-muted">Sin ventas en el período anterior</div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card h-100 admin-kpi">
+            <div class="card-body">
+                <div class="small text-muted">Pedidos</div>
+                <div class="admin-kpi-valor">@Model.Pedidos</div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card h-100 admin-kpi">
+            <div class="card-body">
+                <div class="small text-muted">Ticket promedio</div>
+                <div class="admin-kpi-valor">@Model.TicketPromedio.ToString("C0")</div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card h-100 admin-kpi">
+            <div class="card-body">
+                <div class="small text-muted">Unidades vendidas</div>
+                <div class="admin-kpi-valor">@Model.Unidades</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Ventas en el tiempo -->
+<div class="card mb-4">
+    <div class="card-header fw-medium">Ventas @(Model.Mensual ? "por mes" : "por día") · @periodoTexto.ToLower()</div>
+    <div class="card-body">
+        <div class="admin-grafico">
+            <canvas id="graficoVentas" role="img" aria-label="Gráfico de ventas @(Model.Mensual ? "por mes" : "por día")"></canvas>
+        </div>
+        <details class="mt-2 small">
+            <summary>Ver datos</summary>
+            <div class="table-responsive mt-2" style="max-height:260px">
+                <table class="table table-sm mb-0">
+                    <thead><tr><th>@(Model.Mensual ? "Mes" : "Día")</th><th class="text-end">Ventas</th></tr></thead>
+                    <tbody>
+                        @foreach (var punto in Model.Serie)
+                        {
+                            <tr><td>@punto.Etiqueta</td><td class="text-end">@punto.Valor.ToString("C")</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </details>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <!-- Productos más vendidos -->
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header fw-medium">Productos más vendidos</div>
+            <div class="card-body">
+                @if (Model.TopProductos.Count == 0)
+                {
+                    <p class="text-muted mb-0">Todavía no hay ventas en este período.</p>
+                }
+                else
+                {
+                    <table class="table table-sm align-middle mb-0">
+                        <thead>
+                            <tr><th>Producto</th><th class="w-25"></th><th class="text-end">Unidades</th><th class="text-end">Ingresos</th></tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var p in Model.TopProductos)
+                            {
+                                <tr>
+                                    <td>@p.Nombre</td>
+                                    <td aria-hidden="true"><div class="admin-barra" style="width:@(p.Unidades * 100 / maxProducto)%"></div></td>
+                                    <td class="text-end">@p.Unidades</td>
+                                    <td class="text-end text-nowrap">@p.Ingresos.ToString("C0")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Ventas por categoría -->
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header fw-medium">Ventas por categoría <span class="small text-muted fw-normal">(sin envío)</span></div>
+            <div class="card-body">
+                @if (Model.VentasPorCategoria.Count == 0)
+                {
+                    <p class="text-muted mb-0">Todavía no hay ventas en este período.</p>
+                }
+                else
+                {
+                    <table class="table table-sm align-middle mb-0">
+                        <thead>
+                            <tr><th>Categoría</th><th class="w-25"></th><th class="text-end">Unidades</th><th class="text-end">Ingresos</th></tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var c in Model.VentasPorCategoria)
+                            {
+                                <tr>
+                                    <td>@c.Nombre</td>
+                                    <td aria-hidden="true"><div class="admin-barra" style="width:@((int)(c.Ingresos * 100 / maxCategoria))%"></div></td>
+                                    <td class="text-end">@c.Unidades</td>
+                                    <td class="text-end text-nowrap">@c.Ingresos.ToString("C0")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Pedidos por estado + pendientes más antiguos -->
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header fw-medium">Pedidos del período por estado</div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap gap-2 mb-3">
+                    @foreach (var (estado, cantidad) in Model.PedidosPorEstado)
+                    {
+                        <a class="badge @estado.ClaseBadge() text-decoration-none fs-6 fw-normal"
+                           asp-controller="Pedidos" asp-action="Index" asp-route-estado="@estado">
+                            @estado.Texto(): @cantidad
+                        </a>
+                    }
+                </div>
+
+                <h2 class="h6">Pendientes más antiguos</h2>
+                @if (Model.UltimosPendientes.Count == 0)
+                {
+                    <p class="text-muted small mb-0">No hay pedidos pendientes.</p>
+                }
+                else
+                {
+                    <ul class="list-group list-group-flush">
+                        @foreach (var p in Model.UltimosPendientes)
+                        {
+                            <li class="list-group-item px-0 d-flex justify-content-between align-items-center gap-2">
+                                <div>
+                                    <a asp-controller="Pedidos" asp-action="Detalle" asp-route-id="@p.IdPedido" class="fw-medium">#@p.IdPedido</a>
+                                    <span class="small text-muted">· @p.Cliente · @Fechas.ALocal(p.Fecha).ToString("dd/MM HH:mm")</span>
+                                </div>
+                                <span class="text-nowrap">@p.Total.ToString("C0")</span>
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Stock bajo -->
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header fw-medium">Stock bajo <span class="small text-muted fw-normal">(@EstadisticasService.UmbralStockBajo unidades o menos)</span></div>
+            <div class="card-body">
+                @if (Model.StockBajo.Count == 0)
+                {
+                    <p class="text-muted mb-0"><i class="bi bi-check-circle" aria-hidden="true"></i> Todos los productos activos tienen stock suficiente.</p>
+                }
+                else
+                {
+                    <ul class="list-group list-group-flush">
+                        @foreach (var s in Model.StockBajo)
+                        {
+                            <li class="list-group-item px-0 d-flex justify-content-between align-items-center gap-2">
+                                <span>
+                                    @s.Nombre
+                                    @if (s.Stock == 0)
+                                    {
+                                        <span class="badge text-bg-danger ms-1">Sin stock</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge text-bg-warning ms-1">@s.Stock</span>
+                                    }
+                                </span>
+                                <a class="btn btn-sm btn-outline-secondary text-nowrap" asp-controller="Ingresos" asp-action="Create" asp-route-idProducto="@s.IdProducto">
+                                    <i class="bi bi-box-arrow-in-down" aria-hidden="true"></i> Reponer
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<script id="datosVentas" type="application/json">
+    @Json.Serialize(new { mensual = Model.Mensual, etiquetas = Model.Serie.Select(s => s.Etiqueta), valores = Model.Serie.Select(s => s.Valor) })
+</script>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+    <script src="~/js/admin-estadisticas.js" asp-append-version="true"></script>
+}

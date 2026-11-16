@@ -63,3 +63,27 @@
     color: var(--gs-carbon) !important;
     font-weight: 600;
 }
+
+/* ---------- Resumen ---------- */
+.admin-kpi {
+    border: 1px solid #E5E7EB;
+}
+
+.admin-kpi-valor {
+    font-family: var(--gs-font-display);
+    font-weight: 700;
+    font-size: 2rem;
+    line-height: 1.15;
+}
+
+.admin-grafico {
+    position: relative;
+    height: 280px;
+}
+
+.admin-barra {
+    height: .5rem;
+    min-width: 2px;
+    background: #E84E0B;
+    border-radius: 0 4px 4px 0;
+}
