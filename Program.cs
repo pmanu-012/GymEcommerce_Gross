@@ -111,7 +111,7 @@ var app = builder.Build();
 // Migraciones + roles + admin inicial
 await DbInitializer.SeedAsync(app.Services);
 
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Configuration.GetValue<bool>("Demo:SembrarDatos"))
 {
     using var scope = app.Services.CreateScope();
     await DemoDataSeeder.SeedAsync(scope.ServiceProvider.GetRequiredService<ApplicationDbContext>());
