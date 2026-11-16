@@ -8,6 +8,8 @@ using Microsoft.Extensions.Options;
 using System.Globalization;
 using Microsoft.AspNetCore.DataProtection;
 using QuestPDF.Infrastructure;
+using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -67,6 +69,24 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<NotificacionService>();
 builder.Services.AddScoped<ResenaService>();
 builder.Services.AddScoped<EstadisticasService>();
+builder.Services.Configure<OpcionesGemini>(builder.Configuration.GetSection("Gemini"));
+builder.Services.AddHttpClient<AsistenteService>(c => c.Timeout = TimeSpan.FromSeconds(30));
+
+// Límite de consultas al asistente: 10 por minuto por usuario (o por IP si no inició sesión)
+builder.Services.AddRateLimiter(o =>
+{
+    o.AddPolicy("asistente", ctx => RateLimitPartition.GetFixedWindowLimiter(
+        ctx.User.Identity?.Name ?? ctx.Connection.RemoteIpAddress?.ToString() ?? "anonimo",
+        _ => new FixedWindowRateLimiterOptions { PermitLimit = 10, Window = TimeSpan.FromMinutes(1), QueueLimit = 0 }));
+    
+    o.OnRejected = async (contexto, ct) =>
+    {
+        contexto.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+        contexto.HttpContext.Response.ContentType = "application/json";
+        await contexto.HttpContext.Response.WriteAsync(
+            "{\"ok\":false,\"mensaje\":\"Hiciste muchas consultas seguidas. Esperá un minuto y probá de nuevo.\"}", ct);
+    };
+});
 
 // Cada cuánto se revisa que la sesión siga siendo válida (por defecto, 30 minutos).
 // Con 1 minuto, un cliente dado de baja pierde la sesión casi enseguida.
@@ -119,6 +139,7 @@ app.UseRouting();
 
 app.UseAuthentication(); // siempre antes de UseAuthorization
 app.UseAuthorization();
+app.UseRateLimiter();    // después de la autenticación, para limitar por usuario
 
 app.MapControllerRoute(
     name: "areas",

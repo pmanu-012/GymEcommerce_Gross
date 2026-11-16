@@ -532,3 +532,128 @@ button:focus-visible,
     line-height: 1;
     color: var(--gs-acento);
 }
+/* ---------- Asistente virtual ---------- */
+.gs-asistente-boton {
+    position: fixed;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 1030;
+    border-radius: 999px;
+    padding: .6rem 1.1rem;
+    box-shadow: 0 6px 18px rgba(21, 23, 26, .25);
+}
+
+.gs-asistente {
+    --bs-offcanvas-width: 420px;
+}
+
+@media (max-width: 575.98px) {
+    .gs-asistente {
+        --bs-offcanvas-width: 100vw;
+    }
+}
+
+.gs-asistente-encabezado {
+    background: var(--gs-carbon);
+    color: #fff;
+    border-bottom: 3px solid var(--gs-acento);
+}
+
+    .gs-asistente-encabezado .small {
+        color: #D1D5DB;
+    }
+
+.gs-asistente-mensajes {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    overflow-y: auto;
+    background: var(--gs-hueso);
+}
+
+.gs-msg {
+    max-width: 85%;
+    padding: .55rem .8rem;
+    border-radius: .75rem;
+    white-space: pre-line;
+    line-height: 1.45;
+    font-size: .95rem;
+}
+
+.gs-msg-usuario {
+    align-self: flex-end;
+    background: var(--gs-carbon);
+    color: #fff;
+    border-bottom-right-radius: .2rem;
+}
+
+.gs-msg-asistente {
+    align-self: flex-start;
+    background: #fff;
+    border: 1px solid #E5E7EB;
+    border-bottom-left-radius: .2rem;
+}
+
+.gs-msg-error {
+    align-self: flex-start;
+    background: #FCEBEB;
+    color: #A32D2D;
+}
+
+.gs-pensando {
+    color: var(--gs-gris);
+    font-style: italic;
+}
+
+.gs-asistente-productos {
+    display: flex;
+    flex-direction: column;
+    gap: .4rem;
+}
+
+.gs-asistente-producto {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    padding: .4rem;
+    background: #fff;
+    border: 1px solid #E5E7EB;
+    border-radius: .5rem;
+}
+
+    .gs-asistente-producto img {
+        width: 48px;
+        height: 48px;
+        flex-shrink: 0;
+        object-fit: cover;
+        border-radius: .35rem;
+    }
+
+    .gs-asistente-producto a {
+        color: var(--gs-carbon);
+        text-decoration: none;
+    }
+
+        .gs-asistente-producto a:hover {
+            text-decoration: underline;
+        }
+
+.gs-sugerencias {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem;
+}
+
+    /* Los botones del sitio van en mayúsculas condensadas; las sugerencias y el reinicio, no */
+    .gs-sugerencias .btn,
+    .gs-asistente-reiniciar {
+        font-family: var(--gs-font-body);
+        text-transform: none;
+        letter-spacing: 0;
+        font-size: .85rem;
+        font-weight: 500;
+    }
+
+#asistenteTexto {
+    resize: none;
+}

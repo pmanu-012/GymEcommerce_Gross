@@ -1,0 +1,43 @@
+@* Asistente virtual de compras: botón flotante y panel lateral (offcanvas de Bootstrap) *@
+<button type="button" class="btn btn-primary gs-asistente-boton" data-bs-toggle="offcanvas"
+        data-bs-target="#asistente" aria-controls="asistente">
+    <i class="bi bi-stars" aria-hidden="true"></i>
+    <span class="d-none d-sm-inline ms-1">Asistente</span>
+    <span class="visually-hidden d-sm-none">Abrir el asistente de compras</span>
+</button>
+
+<div class="offcanvas offcanvas-end gs-asistente" tabindex="-1" id="asistente" aria-labelledby="asistenteTitulo"
+     data-url="@Url.Action("Preguntar", "Asistente", new { area = "" })">
+    <div class="offcanvas-header gs-asistente-encabezado" data-bs-theme="dark">
+        <div>
+            <h2 class="offcanvas-title h5 mb-0" id="asistenteTitulo">Asistente de compras</h2>
+            <div class="small">Te ayudo a elegir según tu presupuesto y tu objetivo</div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
+    </div>
+
+    <div class="offcanvas-body d-flex flex-column p-0">
+        <div class="gs-asistente-mensajes flex-grow-1 p-3" id="asistenteMensajes" aria-live="polite">
+            <div class="gs-msg gs-msg-asistente">¡Hola! Contame qué querés entrenar, cuánto espacio tenés o cuál es tu presupuesto, y te recomiendo productos de la tienda.</div>
+            <div class="gs-sugerencias" id="asistenteSugerencias">
+                <button type="button" class="btn btn-sm btn-outline-secondary js-sugerencia">Quiero armar un gym en casa con $300.000</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary js-sugerencia">Busco algo para entrenar piernas</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary js-sugerencia">¿Qué ofertas me recomendás?</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary js-sugerencia">Necesito ropa para salir a correr</button>
+            </div>
+        </div>
+
+        <form id="asistenteForm" class="border-top p-2 d-flex gap-2 align-items-end" autocomplete="off">
+            <label for="asistenteTexto" class="visually-hidden">Tu consulta</label>
+            <textarea id="asistenteTexto" class="form-control" rows="1" maxlength="500"
+                      placeholder="Ej.: algo para entrenar en casa con poco espacio"></textarea>
+            <button type="submit" class="btn btn-primary" aria-label="Enviar consulta">
+                <i class="bi bi-send" aria-hidden="true"></i>
+            </button>
+        </form>
+        <div class="d-flex justify-content-between align-items-center gap-2 px-3 pb-2 small text-muted">
+            <span>Las recomendaciones las genera una IA con el catálogo de la tienda.</span>
+            <button type="button" class="btn btn-link btn-sm p-0 text-nowrap gs-asistente-reiniciar" id="asistenteReiniciar">Nueva conversación</button>
+        </div>
+    </div>
+</div>
