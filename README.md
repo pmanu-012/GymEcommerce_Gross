@@ -151,7 +151,3 @@ GymEcommerce/
 Publicado en MonsterASP.NET con Web Deploy desde Visual Studio. La configuración de producción va en `appsettings.Production.json`, que **no** se sube al repositorio (hay un modelo en `appsettings.Production.example.json`).
 
 ---
-
-## Capturas
-
-_[Agregar capturas en `docs/capturas/` y enlazarlas acá: inicio, catálogo, detalle, carrito, asistente, panel de resumen, auditoría.]_
