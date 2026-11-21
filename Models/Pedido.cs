@@ -9,10 +9,11 @@ public class Pedido
 
     // Se guarda en UTC; se convierte a hora local al mostrarla.
     public DateTime Fecha { get; set; } = DateTime.UtcNow;
-
+    // Siempre un pedido arranca en pendiente.
     public EstadoPedido Estado { get; set; } = EstadoPedido.Pendiente;
 
-    // Foto del momento de la compra (suma de detalles + envío)
+    // Foto del momento de la compra (suma de detalles + envío).
+    // Foto quiere decir que es un valor que se guarda en la base de datos, no se calcula al vuelo.
     public decimal Total { get; set; }
 
     // Dirección de envío (también foto del momento de la compra)

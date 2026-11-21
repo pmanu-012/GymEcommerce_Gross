@@ -16,6 +16,8 @@ public partial class ApplicationDbContext
     private readonly IHttpContextAccessor? _http;
 
     // Entidades que se auditan. El carrito, los detalles y las tablas técnicas quedan afuera (generarían ruido).
+    // HashSet<Type>: estructura de datos que almacena elementos únicos sin duplicados y, por lo general,
+    // sin mantener un orden específico, usando una tabla hash para búsquedas, inserciones y eliminaciones rápidas en tiempo promedio
     private static readonly HashSet<Type> TiposAuditados = new()
     {
         typeof(Producto), typeof(Categoria), typeof(Subcategoria), typeof(Disciplina), typeof(GrupoMuscular),
@@ -52,6 +54,9 @@ public partial class ApplicationDbContext
         Converters = { new JsonStringEnumConverter() }         // "Enviado" en lugar de 2
     };
 
+    //un atributo de tipo registro sellado es una estructura de datos inmutable de la cual ninguna otra clase puede heredar.
+    //En este caso, CambioPendiente encapsula una entrada de entidad (EntityEntry) y un registro de
+    //auditoría (Auditoria) que están pendientes de ser procesados durante la operación de guardado en la base de datos.
     private sealed record CambioPendiente(EntityEntry Entrada, Auditoria Registro);
 
     // SaveChangesAsync() sin parámetros también termina acá, así que cubre todos los guardados de la aplicación
@@ -60,8 +65,8 @@ public partial class ApplicationDbContext
         if (!acceptAllChangesOnSuccess)
             return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
 
-        ChangeTracker.DetectChanges();
-        var pendientes = PrepararAuditoria();
+        ChangeTracker.DetectChanges(); // detecta cambios mediante ChangeTracker
+        var pendientes = PrepararAuditoria(); 
         if (pendientes.Count == 0)
             return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
 
@@ -105,13 +110,14 @@ public partial class ApplicationDbContext
         }
     }
 
+    //metodo que prepara los registros de auditoría para las entidades que han cambiado dependiendo que tipo de cambio se haya realizado (crear, editar, eliminar)
     private List<CambioPendiente> PrepararAuditoria()
     {
-        var idUsuario = _http?.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var idUsuario = _http?.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier); //busca el id del usuario en el contexto HTTP
         var ahora = DateTime.UtcNow;
         var pendientes = new List<CambioPendiente>();
 
-        foreach (var entrada in ChangeTracker.Entries().ToList())
+        foreach (var entrada in ChangeTracker.Entries().ToList())// para cada entrada de entidad en el ChangeTracker, se crea un registro de auditoría si corresponde (tipos auditados)
         {
             var tipo = entrada.Metadata.ClrType;
             if (!TiposAuditados.Contains(tipo))
@@ -183,6 +189,8 @@ public partial class ApplicationDbContext
         return resultado;
     }
 
+    //metodo que obtiene la clave primaria de una entidad a partir de su entrada en el ChangeTracker.
+    //La clave primaria se construye concatenando los valores de las propiedades que forman la clave primaria, separados por comas.
     private static string Clave(EntityEntry entrada) =>
         string.Join(",", entrada.Metadata.FindPrimaryKey()!.Properties
             .Select(p => entrada.Property(p.Name).CurrentValue));

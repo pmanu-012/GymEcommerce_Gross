@@ -53,7 +53,7 @@
                     beginAtZero: true,
                     border: { display: false },
                     grid: { color: '#EEF0F2' },
-                    ticks: { callback: (valor) => '$ ' + compacto.format(valor) }
+                    ticks: { precision: 0, callback: (valor) => '$ ' + compacto.format(valor) }
                 }
             }
         }

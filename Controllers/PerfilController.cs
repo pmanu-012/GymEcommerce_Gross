@@ -41,11 +41,12 @@ public class PerfilController : Controller
         var user = await _userManager.GetUserAsync(User);
         if (user is null)
             return Challenge();
+        //si el usuario no está logueado, se redirige a la página de login (desafio de autenticación)
 
         if (!ModelState.IsValid)
             return View("Index", new PerfilPaginaViewModel { Email = user.Email ?? string.Empty, Datos = datos });
 
-        user.Nombre = datos.Nombre.Trim();
+        user.Nombre = datos.Nombre.Trim(); //trim () elimina espacios en blanco al inicio y al final de la cadena
         user.Apellido = datos.Apellido.Trim();
         user.PhoneNumber = string.IsNullOrWhiteSpace(datos.Telefono) ? null : datos.Telefono.Trim();
 

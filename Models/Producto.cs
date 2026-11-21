@@ -38,6 +38,7 @@ public class Producto
     public byte[]? RowVersion { get; set; }
 
     public int IdSubcategoria { get; set; }
+    //se consigue la categoria del producto a través de la subcategoria, que a su vez tiene la categoria 
     public Subcategoria Subcategoria { get; set; } = null!;
 
     public ICollection<ProductoDisciplina> ProductoDisciplinas { get; set; } = new List<ProductoDisciplina>();
@@ -47,8 +48,11 @@ public class Producto
     public ICollection<ResenaProducto> Resenas { get; set; } = new List<ResenaProducto>();
 
     // Calculados en C#, no existen como columnas.
+    // este bool es true si el producto tiene un descuento cargado y mayor a 0.
     [NotMapped]
     public bool EnOferta => PorcentajeDescuento.HasValue && PorcentajeDescuento.Value > 0;
+    //calcula el precio final del producto, si tiene descuento aplica el porcentaje,
+    //sino devuelve el precio original
 
     [NotMapped]
     public decimal PrecioFinal => EnOferta

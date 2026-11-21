@@ -8,6 +8,8 @@ public static class DbInitializer
 {
     public static async Task SeedAsync(IServiceProvider services)
     {
+        //el scope (o ámbito) es el contexto o zona del código
+        //en el que una variable, función o objeto es visible y puede ser utilizado
         using var scope = services.CreateScope();
         var sp = scope.ServiceProvider;
 

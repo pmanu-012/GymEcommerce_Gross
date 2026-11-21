@@ -129,7 +129,7 @@ public class CatalogoService
     }
     public async Task<PortadaViewModel> ObtenerPortadaAsync()
     {
-        var categorias = await _db.Categorias.AsNoTracking()
+        var categorias = await _db.Categorias.AsNoTracking() // indica que EF Core no debe realizar seguimiento de los objetos porque es para lectura. Mejora rendimiento
             .OrderBy(c => c.Nombre)
             .Select(c => new CategoriaMenuItem { Id = c.IdCategoria, Nombre = c.Nombre })
             .ToListAsync();
@@ -141,6 +141,8 @@ public class CatalogoService
             .Take(4)
             .ToListAsync();
 
+        //Convierte cada producto obtenido en un ProductoCardViewModel, que contiene los datos necesarios para mostrar
+        //una tarjeta de producto en la interfaz.
         var tarjetas = ofertas.Select(ProductoCardViewModel.Desde).ToList();
         await CompletarCalificacionesAsync(tarjetas);
 

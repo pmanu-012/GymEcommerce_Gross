@@ -24,6 +24,9 @@
     color: #D1D5DB;
     padding: .7rem 1.25rem;
     border-left: 4px solid transparent;
+    display: flex;
+    align-items: center;
+    gap: .6rem;
 }
 
 .admin-nav .nav-link:hover {
@@ -38,8 +41,8 @@
 }
 
 .admin-nav .nav-link i {
-    margin-right: .5rem;
     color: var(--gs-acento);
+    flex-shrink: 0;
 }
 
 .tabla-admin thead th {
@@ -86,4 +89,20 @@
     min-width: 2px;
     background: #E84E0B;
     border-radius: 0 4px 4px 0;
+}
+
+/* Menú lateral de ancho fijo en pantallas grandes; el contenido usa el resto */
+@media (min-width: 992px) {
+    .admin-sidebar {
+        flex: 0 0 15rem;
+        width: 15rem;
+        max-width: 15rem;
+    }
+
+        .admin-sidebar + main {
+            flex: 1 1 0;
+            width: auto;
+            max-width: none;
+            min-width: 0;
+        }
 }

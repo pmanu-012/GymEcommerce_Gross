@@ -24,6 +24,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 // --- Identity (usuarios + roles) ---
+// Identity es un sistema de membresía que gestiona la autenticación
+// y autorización de usuarios dentro de una aplicación
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
     {
         options.User.RequireUniqueEmail = true;
@@ -56,7 +58,7 @@ builder.Services.ConfigureApplicationCookie(options =>
         }
      ;
 });
-
+//Configuracion de servicios de la aplicación
 // Se usará en el hito de auditoría para saber qué usuario hizo cada cambio.
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<CatalogoService>();

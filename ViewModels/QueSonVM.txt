@@ -1,0 +1,2 @@
+Un ViewModel sirve principalmente para gestionar y conservar el estado de la interfaz de usuario (UI) y 
+encapsular la lógica de presentación o de negocio asociada a una pantalla, separándola de la vista.

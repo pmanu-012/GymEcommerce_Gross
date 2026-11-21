@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
 </head>
 <body class="d-flex flex-column min-vh-100">
-    <main class="col-lg-9 col-xl-10 p-3 p-lg-4" id="contenido" tabindex="-1">
+    <a class="visually-hidden-focusable gs-saltar" href="#contenido">Saltar al contenido</a>
     <header>
         <nav class="navbar gs-navbar" data-bs-theme="dark">
             <div class="container-fluid">
@@ -119,12 +119,11 @@
 
                             </a>
                         </li>
-                        @* Se suman acá: categorías, subcategorías, disciplinas, grupos musculares, pedidos, clientes, estadísticas y auditoría. *@
                     </ul>
                 </nav>
             </aside>
 
-            <<main class="col-lg-9 col-xl-10 p-3 p-lg-4" id="contenido" tabindex="-1">
+            <main class="col-lg-9 col-xl-10 p-3 p-lg-4" id="contenido" tabindex="-1">
                 @RenderBody()
             </main>
         </div>

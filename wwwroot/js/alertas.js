@@ -1,4 +1,7 @@
 // Ayudantes de SweetAlert2 para todo el panel de administración.
+// SweetAlert2 solo muestra alertas cuando algún código llama explícitamente a los métodos de Alertas (desde una vista Razor por ejemplo).
+
+//modulo global que encapsula los métodos de SweetAlert2 para mostrar alertas y confirmaciones.
 const Alertas = (() => {
     const aviso = Swal.mixin({
         toast: true,

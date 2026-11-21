@@ -17,6 +17,7 @@ public class ProductoCardViewModel
     public decimal Promedio { get; set; }
     public int CantidadResenas { get; set; }
 
+    // Convierte un objeto Producto en un ProductoCardViewModel 
     public static ProductoCardViewModel Desde(Producto p) => new()
     {
         IdProducto = p.IdProducto,
