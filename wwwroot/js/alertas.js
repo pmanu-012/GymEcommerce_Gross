@@ -1,5 +1,6 @@
 // Ayudantes de SweetAlert2 para todo el panel de administración.
 // SweetAlert2 solo muestra alertas cuando algún código llama explícitamente a los métodos de Alertas (desde una vista Razor por ejemplo).
+// Estas estas se cargan en el _layout y en el _LayoutAdmin.cshtml y se pueden usar en cualquier vista Razor.
 
 //modulo global que encapsula los métodos de SweetAlert2 para mostrar alertas y confirmaciones.
 const Alertas = (() => {
