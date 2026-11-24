@@ -231,10 +231,11 @@ public class ProductosController : Controller
         // Sincroniza las tablas intermedias: borra las desmarcadas y agrega las nuevas
         var disciplinasIds = await DisciplinasValidasAsync(vm.DisciplinasSeleccionadas);
         foreach (var pd in producto.ProductoDisciplinas.Where(x => !disciplinasIds.Contains(x.IdDisciplina)).ToList())
-            _db.ProductoDisciplinas.Remove(pd);
-        foreach (var idD in disciplinasIds.Except(producto.ProductoDisciplinas.Select(x => x.IdDisciplina)))
-            producto.ProductoDisciplinas.Add(new ProductoDisciplina { IdDisciplina = idD });
+            _db.ProductoDisciplinas.Remove(pd); // elimina las que ya no están seleccionadas
+        foreach (var idD in disciplinasIds.Except(producto.ProductoDisciplinas.Select(x => x.IdDisciplina))) // except calcula q disciplinas seleccionadas aun no estan asociadas
+            producto.ProductoDisciplinas.Add(new ProductoDisciplina { IdDisciplina = idD }); //por cada disciplina nueva crea una entidad ProductoDisciplina
 
+        //idem para grupos musculares
         var gruposIds = await GruposValidosAsync(vm.GruposSeleccionados);
         foreach (var pg in producto.ProductoGruposMusculares.Where(x => !gruposIds.Contains(x.IdGrupoMuscular)).ToList())
             _db.ProductoGruposMusculares.Remove(pg);

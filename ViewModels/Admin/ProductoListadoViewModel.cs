@@ -18,6 +18,7 @@ public class ProductoFilaViewModel
 // Los filtros (Q, CategoriaId, Estado, Pagina) llegan por query string.
 public class ProductoListadoViewModel
 {
+    //atributo para buscar productos
     public string? Q { get; set; }
     public int? CategoriaId { get; set; }
     public string Estado { get; set; } = "activos"; // activos | inactivos | todos

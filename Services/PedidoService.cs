@@ -115,6 +115,7 @@ public class PedidoService
             if (idCliente is not null && pedido.Estado != EstadoPedido.Pendiente)
                 return new(false, "Solo podés cancelar pedidos pendientes. Si necesitás ayuda, contactanos.");
 
+            // para que no salteen estados (ej: de Pendiente a Entregado)
             if (!TransicionesPedido.EsValida(pedido.Estado, nuevo))
                 return new(false, $"Un pedido {pedido.Estado.Texto().ToLower()} no puede pasar a {nuevo.Texto().ToLower()}.");
 

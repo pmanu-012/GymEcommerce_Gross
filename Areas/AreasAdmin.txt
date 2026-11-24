@@ -1,0 +1,4 @@
+Areas/Admin. Sí, es una sección separada con sus propios controladores, vistas, layout (_AdminLayout, por el _ViewStart de esa carpeta) e imports. 
+Sus URLs llevan el prefijo /Admin/..., por la ruta areas de Program.cs y el atributo [Area("Admin")] de cada controlador. 
+Por eso pueden existir dos PedidosController (el del cliente y el del admin) sin chocar.
+Un detalle importante: el área no protege nada por sí sola. La seguridad la da el [Authorize(Roles = Roles.Administrador)] que tiene cada controlador del área.

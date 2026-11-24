@@ -110,6 +110,7 @@ public abstract class CatalogoAdminController : Controller
         return Json(new { ok = true, mensaje = "Eliminado correctamente." });
     }
 
+    //metodo que prepara el viewmodel para mostrar el modal de alta/edición
     private void Preparar(CatalogoFormViewModel vm)
     {
         vm.PideCategoria = PideCategoria;

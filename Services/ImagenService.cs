@@ -9,6 +9,7 @@ public class ImagenService
     private const long TamanoMaximo = 2 * 1024 * 1024; // 2 MB
     private const string PrefijoRuta = "~/uploads/productos/";
 
+    //propiedad de solo lectura que sirve para obtener información sobre el entorno de alojamiento web, como la ruta raíz del contenido web.
     private readonly IWebHostEnvironment _env;
 
     public ImagenService(IWebHostEnvironment env) => _env = env;

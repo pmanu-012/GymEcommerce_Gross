@@ -91,6 +91,7 @@ public class IngresoService
             if (ingreso.Anulado)
                 return new(false, "Este ingreso ya estaba anulado.");
 
+            //el codigo únicamente verifica que el stock actual sea suficiente para descontar la cantidad completa del ingreso.
             var insuficiente = ingreso.Detalles.FirstOrDefault(d => d.Producto.Stock < d.Cantidad);
             if (insuficiente is not null)
                 return new(false,

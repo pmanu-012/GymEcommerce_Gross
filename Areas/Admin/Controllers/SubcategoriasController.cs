@@ -16,10 +16,16 @@ public class SubcategoriasController : CatalogoAdminController
 
     public SubcategoriasController(ApplicationDbContext db) => _db = db;
 
+    //Título principal que se muestra en la vista del listado.
     protected override string Titulo => "Subcategorías";
+    // nombre en singular, usado para textos como "editar subcategoria"
     protected override string Singular => "subcategoría";
+    // texto que se muestra en el botón de "nuevo" del listado
     protected override string TextoNuevo => "Nueva subcategoría";
+    // Indica que el listado debe mostrar una columna adicional llamada Categoría. Su valor se obtiene de:
+    // detalle = s.Categoria.Nombre, en el método ListarAsync.
     protected override string? ColumnaDetalle => "Categoría";
+    // Indica que el formulario necesita seleccionar una categoría. En la clase base se utiliza para preparar el ViewModel:
     protected override bool PideCategoria => true;
 
     protected override Task<List<CatalogoFilaViewModel>> ListarAsync() =>
