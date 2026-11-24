@@ -34,7 +34,8 @@ public class Producto
     public bool Activo { get; set; } = true;
 
     // Control de concurrencia (evita vender stock que ya no existe)
-    [Timestamp]
+    // almacena una versión del registro en la base de datos.
+    [Timestamp] // este atributo indica a EF Core que esta propiedad es la que se usa para el control de concurrencia.
     public byte[]? RowVersion { get; set; }
 
     public int IdSubcategoria { get; set; }
